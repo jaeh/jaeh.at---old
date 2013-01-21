@@ -1,0 +1,25 @@
+{{#if page.title}}
+  <header>
+    <h1>{{page.title}}</h1>
+  </header>
+{{/if}}
+
+<div class="content">
+  {{#if page.logo}}
+    <img 
+		src="{{page.logo.src}}" 
+		class="floatleft" 
+		alt="{{#if page.logo.alt}}{{page.logo.alt}}{{else}}{{page.logo.title}}{{/if}}" 
+		title="{{#if page.logo.title}}{{page.logo.title}}{{else}}{{page.logo.alt}}{{/if}}" 
+	/>
+  {{/if}}
+  
+  <div>{{page.body}}</div>
+</div>
+
+{{#if page.footer}}
+  <footer>
+    {{page.footer}}
+  </footer>
+{{/if}}
+
