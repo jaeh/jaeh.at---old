@@ -2,19 +2,25 @@
 
 var mongoose = require('mongoose')
   , slugify = require('../utils').slugify
-  , base = require('../base');
+  , base = require('../base')
+  , bonobo = require('../../bonobo');
 
 
 exports.setup = function(req, res) {
   
-  createPageData(mongoose.model('PageData'));
   createPages(mongoose.model('Page'));
   
-  res.render('setup');
+  createPageData(mongoose.model('PageData'), function(err) {
+    if(err) throw err;
+    
+    bonobo.DoTheSetup();
+    
+    res.render('setup');
+  });
 }
 
 
-function createPageData(PageData) {
+function createPageData(PageData, cb) {
   //page data does not exist, inserting it
    
     var pageData = new PageData();
@@ -47,8 +53,13 @@ function createPageData(PageData) {
     }
     
     console.log('saving pageData');
+
+    base.locals.pageData = pageData;
     
-    pageData.save();
+    pageData.save(function(err) {
+      cb(err);
+    });
+    
 }
 
 function createPages(Page) {

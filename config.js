@@ -9,10 +9,8 @@ var express = require('express')
 
 exports.configure = function(app){
   
-  //~ hbs.registerPartial('partial', fs.readFileSync(path.join(app.rootdir, '/views/partial.hbs'), 'utf8'));
+  //~ hbs.registerPartial('partial', fs.readFileSync(path.join(app.rootDir, '/views/partial.hbs'), 'utf8'));
   
-  
-
   app.set('view engine', 'hbs');
   
 }

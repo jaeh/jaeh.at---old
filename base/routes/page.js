@@ -10,8 +10,7 @@ var mongoose = require('mongoose')
 
 exports.page = function(req, res){
 
-  var PageData = mongoose.model('PageData')
-  , Page = mongoose.model('Page');
+  var Page = mongoose.model('Page');
   
   var pageSlug = req.params.page;
   
@@ -20,33 +19,21 @@ exports.page = function(req, res){
   }
     
   //database call for page content here
-  PageData
-  .findOne()
-  .exec(function(err, pageData) {      
+  
+  //looking for the requested page
+  Page
+  .findOne({slug: pageSlug})
+  .exec(function(err, page) {
     
-    console.log(pageData);
-    
-    
-    if(!pageData) {
-      //~ XXX call init function here, pageData does not exist yet. this should be replaced by an error later
-      res.redirect("setup");
+    if(!page){
+      console.log('page not found in db, redirecting to 4oh4');
+      res.redirect("4oh4");
       return;
     }
-    //looking for the requested page
-    Page
-    .findOne({slug: pageSlug})
-    .exec(function(err, page) {
-      
-      if(!page){
-        res.redirect("4oh4");
-        return;
-      }
-      
-      console.log('loading '+pageSlug+ " found pageData and page");
-      
-      res.render('page', {'pageData': pageData, 'page': page});
-      return;
-      
-    });	
-  });
+    
+    console.log('loading '+pageSlug+ ", found page in db");
+    
+    res.render('page', {page: page});
+    return;
+  });	
 }
