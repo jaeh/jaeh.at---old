@@ -1,21 +1,25 @@
 "use strict";
 
 var mongoose = require('mongoose')
+  , PageData = mongoose.model('PageData')
   , slugify = require('../utils').slugify
   , base = require('../base')
   , bonobo = require('../../bonobo');
 
 
 exports.setup = function(req, res) {
-  
-  createPages(mongoose.model('Page'));
-  
-  createPageData(mongoose.model('PageData'), function(err) {
-    if(err) throw err;
-    
-    bonobo.DoTheSetup();
-    
-    res.render('setup');
+  PageData.findOne().exec(function(err, pageData) {
+    if(!pageData) {
+      var createPageReturn = createPages(mongoose.model('Page'));
+      
+      createPageData(mongoose.model('PageData'), function(err, ret) {
+        if(err) throw err;
+        
+        var bonoboReturn = bonobo.DoTheSetup();
+        
+        res.render('setup', {bonoboInfo: bonoboReturn, createPageDataInfo: ret, createPageInfo: createPageReturn});
+      });
+    }
   });
 }
 

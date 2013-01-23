@@ -24,7 +24,7 @@ server.base.configure('development', function(){
   server.base.use(express.errorHandler());
   
   // Bootstrap db connection
-  mongoose.connect('dev:27017/232323232323232323232323');
+  mongoose.connect('dev:27017/123b');
 
 });
 

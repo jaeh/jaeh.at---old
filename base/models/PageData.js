@@ -8,11 +8,7 @@ var pageDataSchema = new Schema({
   , slug: String
   , footer: String
   , logo: String
-  , meta: {
-      mIs: {},
-      og: {},
-      aside: {}
-    }
+  , meta: {}
   , createdAt: {type : Date, default : Date.now}
 });
 //~ 
@@ -23,5 +19,10 @@ var pageDataSchema = new Schema({
 pageDataSchema.path('title').validate(function (title) {
   return title.length > 0
 }, 'page title cannot be blank');
+
+pageDataSchema.pre('save', function(next) {
+  console.log('pageDataSchema has been saved');
+  next();
+});
 
 mongoose.model('PageData', pageDataSchema);

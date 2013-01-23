@@ -40,14 +40,19 @@ function createPosts() {
 
 function updatePageData() {
   
-  console.log('base.locals.pageData =');
-  console.log(base.locals.pageData);
+  var pageData = base.locals.pageData;
   
-  var meta = base.locals.pageData.meta;
+  var meta = pageData.meta;
   
   meta.mIs.header.push({ url: "/posts", text: "posts", order: 1});
   
-  base.locals.pageData.update( {meta: meta}, function(err, res) {
-    if(err) throw err;
-  });
+  console.log(pageData);
+  
+  if(pageData) {
+    pageData.update({meta: meta}, function(err, res) {
+      if(err) throw err;
+      
+      console.log('err = '+err+' res ='+res);
+    });
+  }
 }

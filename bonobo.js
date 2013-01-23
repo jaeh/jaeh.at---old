@@ -47,7 +47,6 @@ bonobo.DoTheSetup = function() {
     
     
     if(setup && setup.init && typeof setup.init === 'function') {
-    
       setup.init();
     }
   }
