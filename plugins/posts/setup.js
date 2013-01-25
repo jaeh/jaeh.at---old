@@ -6,7 +6,7 @@ var mongoose  = require('mongoose')
 
 var setup = module.exports;
 
-setup.init = function() {
+setup.init = function(cb) {
   console.log('initing posts setup');
   
   var Post = mongoose.model('Post');
@@ -16,27 +16,40 @@ setup.init = function() {
     if(!post) {
           
       console.log('no post found, will setup posts plugin now.');
-      createPosts();
+    
       updatePageData();
+    
+      var Post = mongoose.model('Post');
+      
+      var numOfPosts = 20;
+      
+      var doneI = 0;
+      
+      for(var i = 0; i <= numOfPosts; i++) {
+        
+        var post = new Post();
+        post.title = 'post '+i+' title';
+        post.slug = 'post'+i+'title';
+        post.body = 'post '+i+' body';
+        post.footer = 'post '+i+' footer';
+        
+        post.save(function(err) {
+                
+          if( doneI >= numOfPosts) {
+            console.log('posts setup complete');
+            
+            var message = "posts setup complete";
+            console.log('post save completed with err '+err+" and message: "+message);
+            cb(err, message);
+          }
+          doneI++;
+        });
+      }
     }
   });
   
 }
 
-function createPosts() {
-  
-  var Post = mongoose.model('Post');
-  
-  for(var i = 0; i < 20; i++) {
-    
-    var post = new Post();
-    post.title = 'post '+i+' title';
-    post.slug = 'post'+i+'title';
-    post.body = 'post '+i+' body';
-    post.footer = 'post '+i+' footer';
-    post.save();
-  }
-}
 
 function updatePageData() {
   

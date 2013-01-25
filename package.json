@@ -9,6 +9,9 @@
     "express": "3.0.6",
     "hbs": "latest",
     "stylus": "latest",
-    "mongoose": "latest"
+    "mongoose": "latest",
+    "jshashes": "latest",
+    "passport": "latest",
+    "passport-local": "latest"
   }
 }

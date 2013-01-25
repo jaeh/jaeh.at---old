@@ -1,10 +1,19 @@
-setup success
+{{#if showform}}
+  <div class="setupform">
+   <form action="" method="post">
+     <fieldset>
+       <legend>Press the button to start the setup:</legend>
+       <div class="fields">
+         <input type="submit" value="start setup" />
+       </div>
+     </fieldset>
+   </form>
+  
+  </div>
+{{else}}
 
-<div>create page setup:</div>
-<div>{{createPageInfo}}</div>
-
-<div>create pagedata setup:</div>
-<div>{{createPageDataInfo}}</div>
-
-<div>bonobo setup:</div>
-<div>{{bonoboInfo}}</div>
+  setup completed
+  {{#each messages}}
+    {{message}}
+  {{/each}}
+{{/if}}

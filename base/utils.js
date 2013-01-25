@@ -1,7 +1,25 @@
 "use strict";
 
+var utils = module.exports = {};
 
-exports.slugify = function(slug) {
+
+utils.init = function(rootDir, cb) {
+  cb(null, utils);
+}
+
+utils.getObjectLength = function(obj) {
+  var size = 0
+    , key;
+  
+  for (key in obj) {
+      if (obj.hasOwnProperty(key)) size++;
+  }
+  
+  return size;
+}
+
+
+utils.slugify = function(slug) {
   if(slug) {
     //first replace spaces with underscores and lowercase the slug
     slug = slug.replace(/\s/g, '_').toLowerCase();

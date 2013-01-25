@@ -25,6 +25,12 @@ exports.page = function(req, res){
   .findOne({slug: pageSlug})
   .exec(function(err, page) {
     
+    if(!base.locals.pageData){      
+      console.log('pageData not found in db, redirecting to setup');
+      res.redirect("setup");
+      return;
+    }
+    
     if(!page){
       console.log('page not found in db, redirecting to 4oh4');
       res.redirect("4oh4");

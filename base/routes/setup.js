@@ -1,73 +1,98 @@
 "use strict";
 
 var mongoose = require('mongoose')
-  , PageData = mongoose.model('PageData')
   , slugify = require('../utils').slugify
   , base = require('../base')
   , bonobo = require('../../bonobo');
 
+var routes = module.exports = {
+    gets: {},
+    posts: {}  
+};
 
-exports.setup = function(req, res) {
+
+routes.gets.setup = function(req, res) {
+  res.render('setup', {showform: "true"});
+}
+
+routes.posts.setup = function(req, res){
+  
+  var PageData = mongoose.model('PageData');
+  
   PageData.findOne().exec(function(err, pageData) {
+    console.log('pageData in setup =');
+    console.log(pageData);
+    
     if(!pageData) {
-      var createPageReturn = createPages(mongoose.model('Page'));
-      
-      createPageData(mongoose.model('PageData'), function(err, ret) {
-        if(err) throw err;
+      createPages(function(err, createPageReturn) {
         
-        var bonoboReturn = bonobo.DoTheSetup();
-        
-        res.render('setup', {bonoboInfo: bonoboReturn, createPageDataInfo: ret, createPageInfo: createPageReturn});
+        createPageData(function(err, createPageDataInfo) {
+          if(err) throw err;
+          
+          bonobo.DoTheSetup(function(err, messages) {
+            console.log('bonobo.dothesetup called');
+            res.render('setup', {messages: messages});
+          });
+        });
       });
+    }else{
+      res.render('setup', {completed: true});
     }
   });
 }
 
-
-function createPageData(PageData, cb) {
+function createPageData(cb) {
   //page data does not exist, inserting it
    
-    var pageData = new PageData();
-    
-    pageData.title = 'jaeh.at',
-    pageData.footer = 'main page footer',
-    pageData.slug = slugify('jaeh.at'),
-    pageData.logo = 'images/logo.png',
-    pageData.meta = {
-      og: {
-        "title": "jaeh.at"
-      },
-      aside: {
-        title: "aside title",
-        body: "aside body",
-        widgets: [
-          { name: "widget 1", title: "widget title", body: "widget body content"},
-          { name: "widget 2", title: "widget 2 title", body: "widget 2 body content"} 
-        ]
-      },
-      mIs: {
-        header: [
-          { url: "/", text: "home", menu: "header"},
-          { url: "/about", text: "about", menu: "header"}
-        ],
-        footer: [
-          { url: "/impressum", text: "impressum", menu: "footer"}
-        ]
-      }
+  var PageData = mongoose.model("PageData");
+ 
+  var pageData = new PageData();
+  
+  pageData.title = 'jaeh.at',
+  pageData.footer = 'main page footer',
+  pageData.slug = slugify('jaeh.at'),
+  pageData.logo = '/images/logo.png',
+  pageData.meta = {
+    og: {
+      "title": "jaeh.at"
+    },
+    aside: {
+      title: "aside title",
+      body: "aside body",
+      widgets: [
+        { name: "widget 1", title: "widget title", body: "widget body content"},
+        { name: "widget 2", title: "widget 2 title", body: "widget 2 body content"} 
+      ]
+    },
+    mIs: {
+      header: [
+        { url: "/", text: "home", menu: "header"},
+        { url: "/about", text: "about", menu: "header"}
+      ],
+      footer: [
+        { url: "/impressum", text: "impressum", menu: "footer"}
+      ]
     }
+  }
+  
+  base.locals.pageData = pageData;
+  
+  pageData.save(function(err) {
+    var ret = err;
     
-    console.log('saving pageData');
+    if(!err) ret = "pagedata setup successfull";
+    
+    console.log('saved pageData');
 
-    base.locals.pageData = pageData;
-    
-    pageData.save(function(err) {
-      cb(err);
-    });
-    
+    cb(err, ret);
+  });
+  
 }
 
-function createPages(Page) {
-      
+function createPages(cb) {
+  
+  var Page = mongoose.model("Page");
+  
   var page = new Page();
   page.title = '4oh4';
   page.slug = '4oh4';
@@ -78,7 +103,6 @@ function createPages(Page) {
     title: '4oh4 logo title',
     alt: '4oh logo alt'
   };
-  page.save();
 
 
   var page2 = new Page();
@@ -92,8 +116,13 @@ function createPages(Page) {
     alt: 'page logo home alt'
   };
   
-  page2.save();
+  page.save(function(err) {
+    
+    page2.save(function(err) {
+      
+      console.log('saved pages');
   
-  console.log('saved pages');
-  
+      cb(null, "pages saved");
+    });
+  });
 }
