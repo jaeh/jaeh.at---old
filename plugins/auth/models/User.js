@@ -7,6 +7,8 @@ var mongoose = require('mongoose')
 var userSchema = new Schema({
     name: {type: String, trim: true}
   , slug: String
+  , about: String
+  , role: String
   , email: String
   , password: String
   , logo: String
@@ -14,6 +16,15 @@ var userSchema = new Schema({
   , createdAt: {type : Date, default : Date.now}
   //~ , author: ObjectId
 });
+
+
+userSchema.path('role').validate(function (role) {
+  if(!role) role = "user";
+  
+  return role && (role == "admin" || role == "editor" || role == "moderator" || role == "user");
+  
+}, 'user role has to be admin, editor, moderator or user');
+
 
 userSchema.path('name').validate(function (title) {
   return title.length > 0

@@ -7,8 +7,10 @@ var express = require('express')
   , fs = require('fs');
 
 var server = module.exports;
+
 server.rootDir = __dirname;
 
+server.SHA512SALT = 'stgorengowa32rfpw20gfn232'
 
 server.utils = require(path.join(server.rootDir, "/base/utils"));
 
@@ -36,7 +38,7 @@ require('./bonobo').init(path.join(server.rootDir, 'plugins'), function(bonobo) 
     server.base.use(express.errorHandler());
     
     // Bootstrap db connection
-    mongoose.connect('dev:27017/testing');
+    mongoose.connect('dev:27017/testing122222');
 
   });
 

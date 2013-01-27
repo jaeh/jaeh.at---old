@@ -1,0 +1,28 @@
+<% 
+  var ut = locals.utils;
+%>
+
+<% include ../header.ejs %>
+
+
+<header>posts index page.</header>
+<div class="pagination">
+  showing 10 posts of <%= locals.postCount %>
+  
+</div>
+<% ut.each(locals.posts, function (p){ %>
+  <section class="post<% ut.each(p.categories, function(cat){ %> <%= cat.name %><% }); %>">
+    <header class="<%= p.value.slug %>"><a href="/post/<%=p.value.slug%>"><%= p.value.title %></a></header>
+    <div class="body">
+      <%= p.value.body %>
+    </div>
+    <footer><%= p.value.footer %></footer>
+  </section>
+<% }); %>
+
+<% if( ut.count(locals.posts) <= 0 ){ %>
+  <div class="noposts">there are no posts to display</div>
+<% } %>
+
+<% include ../aside.ejs %>
+<% include ../footer.ejs %>

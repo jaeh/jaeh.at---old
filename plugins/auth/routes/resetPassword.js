@@ -3,7 +3,6 @@
 var mongoose          = require('mongoose')
   , UserRegistration  = mongoose.model('UserRegistration')
   , User              = mongoose.model('User')
-  , salt              = 'stgorengowa32rfpw20gfn232'
   , SHA512            = new(require('jshashes').SHA512)();
 
 

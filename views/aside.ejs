@@ -1,0 +1,28 @@
+<% /* some shortcutting first */
+  var pD = locals.pageData
+    , ut = locals.utils
+    , aside = locals.pageData.meta.aside;
+%>
+
+    <aside>
+      <% if (aside.title ){ %>
+        <header><%= aside.title %></header>
+      <% } %>
+      
+      <% if ( aside.body ){ %>
+        <div><%= aside.body %></div>
+      <% } %>
+      
+      <section class="widget">
+        <% ut.each(aside.widgets, function(wgt){ %>
+          <ul<% if( wgt.value.name ){ %> class="<%= wgt.value.name%>"<% } %>>
+            <% if( wgt.value.title ){ %>
+              <li><%= wgt.value.title %></li>
+            <% } %>
+            <% if ( wgt.value.body ) { %>
+              <li><%= wgt.value.body %></li>
+            <% } %>
+          </ul>
+        <% }) %>
+      </section>
+    </aside>

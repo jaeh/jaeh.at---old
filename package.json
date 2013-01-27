@@ -6,12 +6,13 @@
     "start": "node app"
   },
   "dependencies": {
-    "express": "3.0.6",
-    "hbs": "latest",
-    "stylus": "latest",
-    "mongoose": "latest",
-    "jshashes": "latest",
-    "passport": "latest",
-    "passport-local": "latest"
+      "express": "3.0.6"
+    , "ejs": "latest"
+    , "stylus": "latest"
+    , "mongoose": "latest"
+    , "passport": "latest"
+    , "passport-local": "latest"
+    , "underscore": "latest"
+    , "jshashes": "latest"
   }
 }

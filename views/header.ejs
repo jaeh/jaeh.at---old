@@ -1,0 +1,44 @@
+<% /* some shortcutting first */
+  var pD = { title: "setup" }
+    , mIs = {}
+    , ut = locals.utils;
+  
+  if( locals.pageData ) {
+      pD = locals.pageData;
+      if(typeof locals.pageData.meta.mIs.header !== 'undefined') {
+        mIs = locals.pageData.meta.mIs.header;
+      }
+  }
+%>
+
+<!doctype html>
+<html>
+  <head>
+    <title><%= pD.title %></title>
+    <link rel='stylesheet' href='/css/style.css'>
+  </head>
+
+  <body>
+    <header>
+      <div id="logo">
+        <% if (pD.logo) { %> 
+          <img src="<%= pD.logo %>" alt="<%= pD.title %>">
+        <% }else{ %>
+          <%= pD.title %>
+        <% } %>
+      </div>
+      
+      <% if (mIs) { %>
+        <nav>
+          <ul>
+            <% ut.each(mIs, function(mI){ %>
+              <li><a href="<%= mI.value.url %>"><%= mI.value.text %></a></li>
+            <% }) %>
+          </ul>
+        </nav>
+      <% } %>
+      
+    </header>
+    
+    
+    <article>

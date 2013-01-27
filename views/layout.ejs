@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+  <head>
+    <title><%= base.locals.pageData.pageTitle %></title>
+    <link rel='stylesheet' href='/css/style.css'>
+  </head>
+
+  <body>
+    <header>
+      <div id="logo">
+        <% if (locals.pageData.logo) { %> 
+          <img src="<%= locals.pageData.logo %>" alt="<%= locals.pageData.title %>">
+        <%else %>
+          <%= locals.pageData.title %>
+        <% } %>
+      </div>
+      
+      <% if (locals.pageData.meta.mIs.header) { %>
+        <nav>
+          <ul>
+            <% for( var idx in locals.pageData.meta.mIs.header) { %>
+              <li><a href="<%= url%>"><%= text %></a></li>
+            <% } %>
+          </ul>
+        </nav>
+      <% } %>
+      
+    </header>
+    
+    <article>
+      <%= body %>
+    </article>
+    
+    <aside>
+      <div class="test">test</div>
+      <% if (locals.pageData.meta.aside.title %>
+        <header><%= locals.pageData.meta.aside.title %></header>
+      <% } %>
+      
+      <% if (locals.pageData.meta.aside.body %>
+        <div><%= locals.pageData.meta.aside.body %></div>
+      <% } %>
+      
+      <section class="widget">
+        <% for( var idx in locals.pageData.meta.aside.widgets %>
+          <ul class="{{name%>">
+            <% if (locals.pageData.meta.aside.widgets.title) { %>
+              <li><%= locals.pageData.meta.aside.widgets.title %></li>
+            <% } %>
+            <li><%= locals.pageData.body %></li>
+          </ul>
+        <% } %>
+      </section>
+    </aside>
+    
+    <footer>
+      <%= locals.pageData.footer %>
+      
+      <% if( locals.pageData.meta.mIs.footer ){ %>
+        <nav>
+          <ul>
+            
+            <% pageData.meta.mIs.footer.forEach(function(f){ %>
+              <li><a f.href="<%= f.url %>"><%= f.text %></a></li>
+            <% } %>
+            
+            <% for( var idx in pageData.meta.mIs.footer ){ %>
+              <li><a href="<%= url %>"><%= text %></a></li>
+            <% } %>
+          </ul>
+        </nav>
+      <% } %>
+    </footer>
+    <div id="userinfo">
+      <%= currentUser.name %>
+    </div>
+  </body>
+
+</html>
+

@@ -1,0 +1,15 @@
+<% include ../header.ejs %>
+
+
+<% 
+  var ut = locals.utils;
+%>
+
+<% if( typeof locals.user !== 'undefined' ){ %>
+  <% ut.each( locals.user, function(val) { %>
+    <div><%= val.key %>: <%= val.value %></div>
+  <% }) %>
+<% } %>
+
+<% include ../aside.ejs %>
+<% include ../footer.ejs %>

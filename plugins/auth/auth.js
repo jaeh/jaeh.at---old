@@ -3,60 +3,27 @@
 var express = require('express')
   , fs = require('fs')
   , mongoose = require('mongoose')
-  , path = require('path')
+  , path = require('path')  
+  , SHA512            = new(require('jshashes').SHA512)()
   , passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy;
 
-var auth = module.exports;
+var auth = module.exports = {
+    SHA512SALT: 'changeThis'
+  , pluginName: "auth"
+  , version:    "0.0.1" 
+  , rootDir:    __dirname
+  , modelPaths: []
+  , reqs: { gets: [], posts: [] }
+};
+ 
  
 auth.init = function(bonobo, cb) {
-  
-  auth.rootDir = __dirname; 
   //~ 
-  bonobo.modelPaths.push(path.join(auth.rootDir, 'models'));
+  auth.modelPaths.push(path.join(auth.rootDir, 'models/'));
   
   //~ authConfig.configure(base);
-  
-  
-  passport.use(new LocalStrategy(
-    {
-      usernameField: 'name',
-      passwordField: 'password'
-    },
-    function(name, password, done) {
-      console.log('logging in useing name:'+name+" and pass: "+password);
-        
-      mongoose.model("User").findOne({ name: name, password: password }, function(err, user) {
-        if (err) { return done(err); }
-        
-        var message = {};
-        
-        if (!user) {
-          user = undefined;
-          message.class = 'red';
-          message.text = 'Incorrect username or password.';
-        }
-        
-        //~ if (!user.validPassword(password)) {
-          //~ return done(null, false, { message: 'Incorrect password.' });
-        //~ }
-        
-        return done(null, user, message);
-      });
-    }
-  ));
-  
-  passport.serializeUser(function(name, done) {
-    done(null, name);
-  });
 
-  passport.deserializeUser(function(name, done) {
-    mongoose.model("User").findOne({name: name}, function(err, user) {
-      done(err, user);
-    });
-  });
-
-  
   auth.registration = require(path.join(auth.rootDir, 'registration')).init(bonobo);
   
   cb(null, auth);
@@ -64,19 +31,14 @@ auth.init = function(bonobo, cb) {
 
 auth.setupRoutes = function(bonobo) {
     
-  //~ auth.routes.auth = require(path.join(base.rootDir, '/routes/page')).page;
+  var optionRoutes = require(path.join(auth.rootDir, 'routes/options'));
   
-  //~ var loginRoutes = require(path.join(auth.rootDir, '/routes/login'));
-  //~ var registrationRoutes = require(path.join(auth.rootDir, '/routes/registration'));
-  //~ var resetPasswordRoutes = require(path.join(auth.rootDir, '/routes/resetPassword'));
-  
-  
-  bonobo.reqs.gets.push({
+  auth.reqs.gets.push({
     url:    '/login', 
     route:  function(req,res) { res.render('auth/login');}
   });
   
-  bonobo.reqs.gets.push({
+  auth.reqs.gets.push({
     url: '/logout', 
     route: function(req, res){ 
       req.logout();
@@ -84,25 +46,61 @@ auth.setupRoutes = function(bonobo) {
     }
   });
   
-  //~ bonobo.reqs.posts.push({
-    //~ url:    '/login', 
-    //~ route:  function(req,res) { res.render('auth/login');}
-  //~ });
-  
-  bonobo.reqs.posts.push({
+  auth.reqs.posts.push({
     url: '/login', 
     route: function(req,res,next) {
     
-      passport.authenticate('local', function(err, user, info) {
-      
-        if (err) { return next(err) }
-
+      var loginObject = {
+          name: req.body.name
+        , password: req.body.password
+      }
+    
+      mongoose.model('User').findOne(loginObject, function(err, user) {
+     
         if (!user) { return res.render('auth/login', {message: info}) }
 
-        res.redirect('/account');
+          
+        if(user.password == req.body.password) {
+            
+          var userForLogin = {
+            name: user.name,
+            email: user.email,
+            about: user.about
+          }
+          //~ passport.authenticate('local', function(err, user, info) {
+          req.login(userForLogin, function(err) {
+            //~ if (err) { return next(err); }
+                
+            if (err) { return next(err) }
+            
+            
+            res.redirect('/user/'+userForLogin.name);
 
-      })(req, res, next);
+          });
+        }
+      });
     }
+  });
+  
+  auth.reqs.gets.push({
+      url: '/admin/auth/options'
+    , route: optionRoutes.gets.options
+  });
+  
+  auth.reqs.posts.push({
+      url: '/admin/auth/options'
+    , route: optionRoutes.posts.options
+  });
+  
+  
+  auth.reqs.gets.push({
+      url: '/user/:user'
+    , route: function(req,res){
+      
+        console.log('req.params = ');
+        console.log(req.params);
+        res.render('profile/user', {user: {name: "test", logo: 'logo'} });
+      }
   });
   
   //setup routes of subplugins
@@ -119,3 +117,48 @@ auth.ensureAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/login');
 }
+
+
+auth.options = [
+    { name: "description", value: "the auth plugin handles login and registration of users" }
+  , { name: "showLinks", value: true }
+  , { name: "needEmailConfirm", value: true }
+  , { name: "allowRegistration", value: true }
+];
+
+
+passport.use(new LocalStrategy(
+  {
+    usernameField: 'name',
+    passwordField: 'password'
+  },
+  function(name, password, done) {
+    
+    //~ var password = SHA512.b64_hmac(password, auth.SHA512SALT);
+    
+    mongoose.model("User").findOne({ name: name }, function(err, user) {
+      if (err) { return done(err); }
+      
+      console.log('logging in using name:'+name+" and pass: "+password);
+      console.log('original user pass ='+user.password);
+      
+      var message = {};
+      
+      if (!user) {
+        user = undefined;
+        message.class = 'red';
+        message.text = 'Incorrect username or password.';
+      }
+      
+      return done(null, user, message);
+    });
+  }
+));
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+  done(null,user);
+});

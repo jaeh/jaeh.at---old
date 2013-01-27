@@ -1,13 +1,12 @@
 "use strict";
 var express = require('express')
   , mongoose = require('mongoose')
-  , hbs = require('hbs')
+  , ejs = require('ejs')
   , fs = require('fs')
   , path = require('path')
   , passport = require('passport');
 
 var base = module.exports = express();
-
 
 base.init = function() {
 
@@ -27,33 +26,80 @@ base.config = function(viewRootDir) {
     
     base.set('port', process.env.PORT || 3000);
     
-    base.set('view engine', 'hbs');
+    base.set('views', path.join(viewRootDir, 'views')); // use appRootDir/views as template directory
     
-    base.set('views', path.join(viewRootDir, 'views'));    
+    base.set('view engine','ejs');  // use the EJS node module
     
-    base.use(express.logger('dev'));
-    base.use(express.cookieParser());
-    base.use(express.bodyParser());
-    base.use(express.methodOverride());
-    
-    
-    base.use(express.session({ secret: 'spoiegnq0fnqoewslkncwsl39' }));
-    // Initialize Passport!  Also use passport.session() middleware, to support
-    // persistent login sessions (recommended).
-    base.use(passport.initialize());
-    base.use(passport.session());
-    
-    
+        
     base.use(express.favicon(path.join(base.rootDir, '/public/images/favicon.ico')));
     
     base.use(require('stylus').middleware(path.join(base.rootDir, 'public')));
     
     base.use(express.static(path.join(base.rootDir, 'public')));
     
-    //custom middleware to get the pagedata if it hasnt been set.
+    
+    base.use(express.logger('dev'));
+    base.use(express.cookieParser('etgvwezgwegwgwgw'));
+    base.use(express.bodyParser());
+    base.use(express.methodOverride());
+    
+    
+    
+    base.use(express.session());
+    // Initialize Passport!  Also use passport.session() middleware, to support
+    // persistent login sessions (recommended).
+    base.use(passport.initialize());
+    base.use(passport.session());
+    
+    
+    
+    //custom middleware to get all base.locals that we need...
     base.use(function(req,res,next) {
+      
+      base.locals.utils = {
+        each: function(arrayOrObject, cb) {
+         
+          var array = [];
+                    
+          for(var key in arrayOrObject) {
+            array.push( {
+              value: arrayOrObject[key],
+              key: key
+            });
+            
+          }  
+          
+          for(var i = 0; i < array.length; i++){
+            cb(array[i]);
+          }
+        },
+        
+        
+        exists: function(obj) {
+          if(typeof obj != undefined) {
+            return obj;
+          }
+          return false;
+        },
+        
+        count: function(arrayOrObject) {
+          console.log('typeof = '+typeof arrayOrObject);
+          
+          if(typeof arrayOrObject !== 'array' && typeof arrayOrObject !== 'object') {
+            return -1;
+          }
+          
+          var count = 0;
+          for(var i in arrayOrObject) {
+            count++;
+          }
+          return count;
+        }
+      }
+    
       //~ XXX todo: change this to update every few minutes
       if(!base.locals.pageData) {
+        
         base.locals.pageData = false;
         
         mongoose.model("PageData")
@@ -68,17 +114,13 @@ base.config = function(viewRootDir) {
       }else{
         next();
       }
+      
     });
 
 
     //route page calls last
     base.use(base.router);
-    
-    base.use(function(req,res,next) {
-      console.log('after router');
-      
-      next();
-    });
+
   });
 
 }

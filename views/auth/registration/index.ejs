@@ -1,0 +1,46 @@
+<% include ../../header.ejs %>
+
+<form method="post">
+  <fieldset>
+    <legend>
+      <% if( typeof locals.errors === "object" ){ %>
+        <% if( locals.errors.noname ){ %>
+            <div class="error">username missing</div>
+        <% } %>
+        <% if( locals.errors.noemail ){ %>
+            <div class="error">email missing</div>
+        <% } %>
+        <% if( locals.errors.nopassword ){ %>
+            <div class="error">password missing</div>
+        <% } %>
+        <% if( locals.errors.userExists ){ %>
+          <div class="error">user with this name or email exists already</div>
+        <% } %>
+      <% }else{ %>
+        <div>please input your username, password and email to continue:</div>
+      <% } %>
+    </legend>
+    
+    <div class="fields">
+      <label for="name">username:</label>
+      <input type="text" name="name" value="" id="name" />
+    </div>
+    
+    <div class="fields">
+      <label for="email">email:</label>
+      <input type="text" name="email" value="" id="email" />
+    </div>
+    
+    <div class="fields">
+      <label for="password">password:</label>
+      <input type="text" name="password" value="" id="password" />
+    </div>
+    
+    <div class="fields submit">
+      <input type="submit" value="submit" />
+    </div>
+  </fieldset>
+</form>
+
+<% include ../../aside.ejs %>
+<% include ../../footer.ejs %>

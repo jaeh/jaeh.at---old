@@ -3,8 +3,9 @@
 var mongoose          = require('mongoose')
   , UserRegistration  = mongoose.model('UserRegistration')
   , User              = mongoose.model('User')
-  , salt              = 'stgorengowa32rfpw20gfn232'
-  , SHA512            = new(require('jshashes').SHA512)();
+  , path              = require('path')
+  , SHA512            = new(require('jshashes').SHA512)()
+  , auth              = require(path.join(__dirname, '..', 'auth'));
 
 
 var routes = module.exports = {
@@ -23,22 +24,22 @@ routes.posts.registration = function(req, res) {
     errors: {}
   }
   
-  if(!req.body || !req.body.name) {
-    if(!req.body.name){
-      returner.errors.noname = returner.error = true;
-    }
-    
-    if(!req.body.email){
-      returner.errors.noemail = returner.error =true;
-    }
-    
-    if(!req.body.password){
-      returner.errors.nopassword = returner.error = true;  
-    }
+  if(!req.body.name){
+    returner.errors.noname = returner.error = true;
   }
   
+  if(!req.body.email){
+    returner.errors.noemail = returner.error =true;
+  }
   
-  if(!returner.error && req.body) {
+  if(!req.body.password){
+    returner.errors.nopassword = returner.error = true;  
+  }
+
+  console.log('registering in user req.body =');
+  console.log(req.body);
+  
+  if(req.body && !returner.error) {
     
     User.findOne({$or: [ { name: req.body.name }, { email: req.body.email } ]}, "email", function(err, user) {
       UserRegistration.findOne({$or: [ { name: req.body.name }, { email: req.body.email } ]}, "email", function(err, userReg) {
@@ -57,11 +58,9 @@ routes.posts.registration = function(req, res) {
         
         userRegistration.password = req.body.password;
         
-        var usersalt = req.body.name + req.body.email;
-        
         //request has not been sent by javascript, password is not encrypted
         if(!req.body.js) {
-          userRegistration.password = SHA512.b64_hmac(req.body.password, usersalt);
+          //~ userRegistration.password = SHA512.b64_hmac(req.body.password, auth.SHA512SALT);
         }
         
         userRegistration.random = parseInt(Math.random() * 1000000000000000);
@@ -75,7 +74,6 @@ routes.posts.registration = function(req, res) {
       });
     });
   }else{
-  
     res.render( template, returner);
   }
 }
@@ -128,7 +126,8 @@ routes.posts.registrationConfirm = function(req, res) {
           req.login(user, function(err) {
             if (err) { return next(err); }
             
-            return res.redirect('/users/' + req.user.name);
+            
+            return res.redirect('/user/' + req.user.name);
           });
         });
       }else{

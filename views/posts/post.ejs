@@ -1,0 +1,20 @@
+<% 
+  var ut = locals.utils
+    , p = locals.post;
+%>
+
+<% include ../header.ejs %>
+
+<% if( typeof locals.post !== "undefined" ){ %>
+  <section class="post">
+    <header class="<%= locals.post.slug %>"><%= locals.post.title %></header>
+    <div class="body">
+      <%= locals.post.body %>
+    </div>
+    <footer><%= locals.post.footer %></footer>
+  </section>
+<% } %>
+
+<% include ../aside.ejs %>
+<% include ../footer.ejs %>
+

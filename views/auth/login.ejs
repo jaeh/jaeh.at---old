@@ -1,0 +1,53 @@
+<% include ../header.ejs %>
+
+<% 
+  var ut  = locals.utils
+    , msg = {
+        text: false
+      , css: 'green'
+    };
+    
+  if(typeof message !== "undefined" ) { 
+    if(message.class) {
+      msg.css = message.class;
+    }
+    if(message.text) {
+      msg.text = message.text;
+    }
+  }
+%>
+
+<% if( typeof user !== "undefined" ){ %>
+  
+  <div class="username"><%= user.name %></div>
+  <a href="/logout">logout</a>
+  
+<% }else{ %>
+
+  <div  class="messages <%= msg.css %>">
+    <% if ( msg.text ){ %>
+      <%= msg.text %>
+    <% } %>      
+  </div>
+
+  <form action="/login" method="post">
+    
+
+    <legend>Please input your name and password:</legend>
+
+      <div class="fields">
+          <label for="name">Name:</label>
+          <input type="text" name="name" />
+      </div>
+      <div class="fields">
+          <label for="password">Password:</label>
+          <input type="password" name="password" />
+      </div>
+      <div class="fields">
+          <input type="submit" value="log in" />
+      </div>
+  </form>
+<% } %>
+
+<% include ../aside.ejs %>
+<% include ../footer.ejs %>

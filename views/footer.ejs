@@ -1,0 +1,43 @@
+<% /* some shortcutting  */
+  var pD = { title: "setup"}
+    , mIs = {found: "none"}
+    , ut = locals.utils;
+  
+  
+  if( typeof locals.pageData !== "undefined" ) {
+      pD = locals.pageData;
+      if(typeof locals.pageData.meta.mIs.footer !== 'undefined') {
+        mIs = locals.pageData.meta.mIs.footer;
+      }
+  }
+  
+  if( typeof locals.currentUser !== 'undefined' ){
+    currentUser = locals.currentUser;
+  }
+%>
+
+    </article>
+  
+    <footer>
+      <% if( pD.footer ){ %>
+        <%= pD.footer %>
+      <% } %>
+      
+      <% if( typeof mIs === "object" || typeof mIs === "array" ){ %>
+        <nav>
+          <ul>            
+            <% ut.each(mIs, function(mI){ %>
+              <li><a href="<%= mI.value.url %>"><%= mI.value.text %></a></li>
+            <% }) %>
+          </ul>
+        </nav>
+      <% } %>
+    </footer>
+    <div id="userinfo">
+      <% if( typeof currentUser !== 'undefined' && currentUser.name ){ %>
+        <%= currentUser.name %>
+      <% } %>
+    </div>
+  </body>
+
+</html>

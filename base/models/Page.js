@@ -9,10 +9,7 @@ var pageSchema = new Schema({
   , body: String
   , footer: String
   , logo: { src: String, title: String, alt: String }
-  , meta: {
-      mIs: [],
-      og: {}
-    }
+  , meta: {}
   , createdAt: {type : Date, default : Date.now}
   , menu: String
 });

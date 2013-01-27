@@ -1,0 +1,53 @@
+<% include ../../header.ejs %>
+
+<% 
+  var cU = locals.currentUser
+    , ut = locals.utils;
+%>
+
+<div class="message">
+  <header>Hello <% if(locals.currentUser && locals.currentUser.name && typeof locals.currentUser.name !== "undefined" ){ %><%= locals.currentUser.name %><% } %></header>
+  <form method="post">
+    <fieldset>
+      <legend>
+        <% if( typeof locals.errors !== 'undefined' ) { %>
+          <% if( locals.errors.norandom ){ %>
+            <div class="error">activation random missing.</div>
+          <% } %>
+          
+          <% if( locals.errors.noemail ){ %>
+            <div class="error">email missing</div>
+          <% } %>
+          
+          <% if( locals.errors.nouser ){ %>
+            <div class="error">no matching user has been found in the database.</div>
+          <% } %>
+        <% } %>
+        
+        
+        
+        <% if( typeof locals.errors === 'undefined' && locals.email ){ %>
+          The confirmation code has been sent to <%= locals.email %>. Check your inbox.
+        <% } %>
+        
+      </legend>
+
+      <div class="fields">
+        <label for="email">Input your email here:</label>
+        <input type="text" name="email" value="" id="email" />
+      </div>
+      <div class="fields">
+        <label for="random">input your activation random here:</label>
+        <input type="text" name="random" value="" id="random" />
+      </div>
+
+      <div class="fields submit">
+        <input type="submit" value="submit" />
+      </div>
+    </fieldset>
+  </form>
+</div>
+
+<% include ../../footer.ejs %>
+<% include ../../aside.ejs %>
+

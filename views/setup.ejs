@@ -1,0 +1,30 @@
+<% include header.ejs %>
+
+<% var ut = locals.utils; %>
+
+<% if( typeof messages === "object" || typeof messages === "array" ){
+  ut.each(messages, function(msg) {
+    if( msg ){
+      if( msg.message ){ %>
+        <%= msg.message %>
+      <% }
+    }
+  })
+} %>
+<% if( typeof showform !== 'undefined' && showform == "true" ){ %>
+  <div class="setupform">
+   <form method="post">
+     <fieldset>
+       <legend>Press the button to start the setup:</legend>
+       <div class="fields">
+         <input name="submit" type="submit" value="start setup" />
+       </div>
+     </fieldset>
+   </form>
+  </div>
+<% } else { %>
+  <div>setup completed</div>
+<% } %>
+
+<% include aside.ejs %>
+<% include footer.ejs %>

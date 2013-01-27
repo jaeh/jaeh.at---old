@@ -6,7 +6,7 @@ var mongoose = require('mongoose')
 
 var routes = module.exports = {};
 
-routes.posts = function(req, res, next) {
+routes.postsadmin = function(req, res, next) {
   var queryObject = {};
   
   //~ console.log(query.count());
@@ -14,22 +14,19 @@ routes.posts = function(req, res, next) {
     if(err) next(err);
     
     Post
-    .find({}).limit(10).sort("-createdAt")
+    .find({}).limit(20).sort("-createdAt")
     .exec(function(err, posts) {
       
-      res.render('posts/posts', {posts: posts, postCount: count});
+      res.render('posts/admin/posts', {posts: posts, postCount: count});
       return;
-      
     });	
   });
 }
 
 
-routes.post = function(req, res, next) {
-  console.log('req.params =');
-  console.log(req.params.slug);
+routes.postadmin = function(req, res, next) {
   if(!req.params || !req.params.slug) {
-    res.redirect('/posts');
+    res.redirect('/postsAdmin');
     return;
   }
 
@@ -41,11 +38,8 @@ routes.post = function(req, res, next) {
       next();
       return;
     }
-    
-    console.log('post = ');
-    console.log(post);
-    
-    res.render('posts/post', {post: post});
+        
+    res.render('posts/postAdmin', {post: post});
     return;
     
   });

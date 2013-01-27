@@ -12,7 +12,7 @@ var path      = require('path')
 var bonobo = module.exports;
 
 bonobo.init = function(rootDir, cb){
-  console.log('bonobo init called');
+  
   bonobo.rootDir = __dirname;
   bonobo.pluginDir = rootDir;
   
@@ -22,12 +22,13 @@ bonobo.init = function(rootDir, cb){
   //will be added to to enable models in plugins
   bonobo.modelPaths = [];
   
-  
   //reqs holds the http requests the plugins register
-  bonobo.reqs = {};
-  bonobo.reqs.gets = [];
-  bonobo.reqs.posts = [];
   
+  bonobo.reqs = {
+      gets: []
+    , posts: []
+  };
+   
   var readDirs = fs.readdirSync(rootDir);
   
   //load and init plugins
@@ -61,17 +62,15 @@ bonobo.DoTheSetup = function(cb) {
   for(var idx in bonobo.plugins) {
     
     var setup = require(path.join(bonobo.plugins[idx].rootDir, 'setup'));
-        
-      console.log('setup = ');
-      console.log(setup);
+      
     //only if exists and executable
     if(setup && setup.init && typeof setup.init === 'function') {
-      console.log('adding '+setup+" to setups");
+      //~ console.log('adding '+setup+" to setups");
       setups.push(setup);
     }
   }
   
-  console.log('setups.length ='+setups.length);
+  //~ console.log('setups.length ='+setups.length);
   
   for(var i = 0; i < setups.length; i++) {
     var setup = setups[i];
@@ -111,12 +110,16 @@ function doSetup(setup, callback) {
 }
 
 bonobo.DoThemModels = function() {
-   
+  
   base.modelPaths.push(path.join(base.rootDir, '/models'));
   
-  for(var idx in bonobo.modelPaths) {
+  for(var idx in bonobo.plugins) {
+    
+    var p = bonobo.plugins[idx].modelPaths;
+    if(p) {
     //~ console.log('bonobo.modelPaths['+idx+'] '+bonobo.modelPaths[idx]);
-    base.modelPaths.push(bonobo.modelPaths[idx]);
+      base.modelPaths.push(p);
+    }
   }
   
   // load and setup models from all plugins
@@ -124,11 +127,18 @@ bonobo.DoThemModels = function() {
     
     var p = base.modelPaths[idx];
     
-    //load every file found in every modelpath dir
-    fs.readdirSync(p).forEach(function (file) {
-      //~ console.log('enabling model '+path.join(p, file));
-      require(path.join(p, file));
-    });
+    if(p && p[p.length-1] !== '/'){
+      p = p+'/';
+    }
+  
+    if(fs.existsSync(p) != false) {
+      
+      //load every file found in every modelpath dir
+      fs.readdirSync(p).forEach(function (file) {
+        //~ console.log('enabling model '+path.join(p, file));
+        require(path.join(p, file));
+      });
+    }
   }
 }
 
@@ -145,6 +155,7 @@ bonobo.RouteThemAll = function() {
     base.post('/setup', base.routes.setup.posts.setup);
   }
   
+  
   for(var pluginName in bonobo.plugins) {
     var pl = bonobo.plugins[pluginName]
     
@@ -155,31 +166,49 @@ bonobo.RouteThemAll = function() {
   }
   // setup page requests
 
+  //first set the user of this request:
+  
+  base.get("*", function(req,res, next) {
+    base.locals.currentUser = req.user;
+    next();
+  });
+
   base.gets = [];
   base.posts = [];
   
   base.gets.push({ url: '/', route: base.routes.pages});
     
   //get the requests from the plugins and add them to the base requests
-  for(var fIdx in bonobo.reqs) {
-    var reqs = bonobo.reqs[fIdx];
-
-    for(var idx in reqs){
-      var fE = reqs[idx];
-      if(fE.url && fE.route){
-        base[fIdx].push(fE);
+  
+  for(var plIdx in bonobo.plugins) {
+    var reqs = bonobo.plugins[plIdx].reqs;
+    console.log('reqs = ');
+    console.log(reqs);
+    
+    for(var idx in reqs) {
+      
+      var verbs = reqs[idx];
+      console.log('verbs = ');
+      console.log(verbs);
+      for(var verb in verbs) {
+        var fE = verbs[verb];
+        console.log('fE =');
+        console.log(fE);
+        if(fE.url && fE.route) {
+          base[idx].push(fE);
+        }
       }
     }
   }
   
   //pushing this last ensures the 4oh4 page gets called and this url filter works.
-  base.gets.push({url: '/:page', route: base.routes.pages});   
-    
+  base.gets.push({url: '/:page', route: base.routes.pages});
+  
   for(var idx in base.gets) {
     var getter = base.gets[idx];
     if(getter.url && getter.route) {
-      //~ console.log('initialise getter:');
-      //~ console.log(getter);
+      console.log('initialise getter:');
+      console.log(getter);
       if(getter.middleware) {
         base.get(getter.url, getter.middleware, getter.route);
         return;
@@ -201,5 +230,13 @@ bonobo.RouteThemAll = function() {
       
       base.post(poster.url, poster.route);
     }
-  }    
+  }
+  
+  var Route4oh4 = function(req,res) {
+    res.redirect('4oh4');
+  }
+  
+  //4oh4 page handler
+  base.get("*", Route4oh4);
+  base.post("*", Route4oh4);
 }
