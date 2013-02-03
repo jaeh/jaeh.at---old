@@ -2,7 +2,9 @@
 
 
 var mongoose = require('mongoose')
-  , Post = mongoose.model("Post");
+  , Post = mongoose.model("Post")
+  , path = require('path')
+  , settings = require(path.join(__dirname, '../settings'));
 
 var routes = module.exports = {};
 
@@ -13,21 +15,83 @@ routes.posts = function(req, res, next) {
   Post.count({}, function(err, count) {
     if(err) next(err);
     
+    var postsPerPage = parseInt(settings.pagination.value.show.value.perpage.value);
+    
+    var skipFrom = 0
+      , pageIndex = 0;
+  
+    if(req.params && req.params.pagination) {
+      pageIndex = parseInt(req.params.pagination);
+      skipFrom = parseInt(postsPerPage) * parseInt(req.params.pagination);
+    }
+    
+    //~ console.log('pageIndex:'+pageIndex+' skipFrom ='+skipFrom+"  count="+count);
+    
     Post
-    .find({}).limit(10).sort("-createdAt")
+    .find({}).limit(postsPerPage).skip(skipFrom).sort("-createdAt")
     .exec(function(err, posts) {
       
-      res.render('posts/posts', {posts: posts, postCount: count});
+      
+      var prevUrlTarget = pageIndex -1;
+      
+      if(prevUrlTarget <= 0 ) {
+        prevUrlTarget = ''
+      }
+      
+      
+      var countEnd = skipFrom + postsPerPage -1;
+      
+      if(countEnd > count ){
+        countEnd = count;
+      }
+          
+      var currentPaginationPage = (skipFrom / postsPerPage) + 1;
+      
+      var endPaginationPage = parseInt(count / postsPerPage);
+      
+      var modulo = count % postsPerPage;
+      //~ 
+      //~ console.log('modulo ='+modulo);
+      if( modulo > 0 ){
+        endPaginationPage++;
+      }
+      //~ console.log('skipFrom ='+skipFrom+' count ='+count);
+          
+      var pagination = {
+            prev: {
+                show: skipFrom > 0
+              , text: 'previous'
+              , url: '/posts/'+prevUrlTarget
+            }
+            
+          , next: {
+                show: skipFrom + postsPerPage < count
+              , text: 'next'
+              , url: '/posts/'+(parseInt(pageIndex) + 1)
+            }
+            
+          , count: {
+                show: settings.pagination.value.show.value.count.value || false
+              , current: currentPaginationPage
+              , end: endPaginationPage
+            }
+          , above: {
+                show: settings.pagination.value.show.value.above.value || true
+          }
+          , below: {
+                show: settings.pagination.value.show.value.below.value || true
+          }
+      };
+      
+      res.render('posts/posts', {posts: posts, pagination: pagination});
       return;
       
-    });	
+    });
   });
 }
 
 
 routes.post = function(req, res, next) {
-  console.log('req.params =');
-  console.log(req.params.slug);
   if(!req.params || !req.params.slug) {
     res.redirect('/posts');
     return;
@@ -42,8 +106,6 @@ routes.post = function(req, res, next) {
       return;
     }
     
-    console.log('post = ');
-    console.log(post);
     
     res.render('posts/post', {post: post});
     return;

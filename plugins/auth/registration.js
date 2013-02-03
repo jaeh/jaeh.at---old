@@ -19,43 +19,45 @@ registration.init = function(bonobo) {
 
 
 
-registration.setupRoutes = function(bonobo) {
+registration.setupRoutes = function(auth, cb) {
   
   var User              = mongoose.model("User")
     , UserRegistration  = mongoose.model("UserRegistration");
   
   var routes = require(path.join(registration.rootDir, 'routes/registration'));
   
-  bonobo.reqs.gets.push({
+  auth.reqs.gets.push({
     url:    '/registration', 
     route:  function(req,res) { res.render('auth/registration');}
   });
   
-  bonobo.reqs.gets.push({
+  auth.reqs.gets.push({
     url:    '/registration/confirm',
     route:  function(req, res) { res.render('auth/registration/confirm');}
   });
   
-  bonobo.reqs.gets.push({
+  auth.reqs.gets.push({
     url:    '/registration/confirm/:code',
     route:  function(req, res) { res.render('auth/registration/confirm');}
   });
   
   
-  bonobo.reqs.posts.push({
+  auth.reqs.posts.push({
     url: '/registration',
     route: routes.posts.registration
   });
   
   
-  bonobo.reqs.posts.push({
+  auth.reqs.posts.push({
     url:    '/registration/confirm',
     route:  routes.posts.registrationConfirm
   });
   
-  bonobo.reqs.posts.push({
+  auth.reqs.posts.push({
     url:    '/registration/confirm/:code',
     route:  routes.posts.registrationConfirm
   });
   
+  cb();
 }
+

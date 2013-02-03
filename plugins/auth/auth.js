@@ -24,14 +24,12 @@ auth.init = function(bonobo, cb) {
   
   //~ authConfig.configure(base);
 
-  auth.registration = require(path.join(auth.rootDir, 'registration')).init(bonobo);
+  auth.registration = require(path.join(auth.rootDir, 'registration')).init(auth);
   
   cb(null, auth);
 }
 
-auth.setupRoutes = function(bonobo) {
-    
-  var optionRoutes = require(path.join(auth.rootDir, 'routes/options'));
+auth.setupRoutes = function(bonobo, cb) {
   
   auth.reqs.gets.push({
     url:    '/login', 
@@ -82,17 +80,7 @@ auth.setupRoutes = function(bonobo) {
     }
   });
   
-  auth.reqs.gets.push({
-      url: '/admin/auth/options'
-    , route: optionRoutes.gets.options
-  });
-  
-  auth.reqs.posts.push({
-      url: '/admin/auth/options'
-    , route: optionRoutes.posts.options
-  });
-  
-  
+ 
   auth.reqs.gets.push({
       url: '/user/:user'
     , route: function(req,res){
@@ -104,7 +92,7 @@ auth.setupRoutes = function(bonobo) {
   });
   
   //setup routes of subplugins
-  auth.registration.setupRoutes(bonobo);
+  auth.registration.setupRoutes(auth, cb);
 }
 
 
@@ -162,3 +150,15 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(user, done) {
   done(null,user);
 });
+
+
+auth.settings = {
+  showlinks: {
+      value: {
+        registration: false,
+        login: true
+      }
+    , type: 'list'
+    , desc: 'show menuitems in the header menu'
+  }
+};

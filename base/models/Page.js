@@ -2,9 +2,11 @@
 
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
+  , path = require('path')
+  , utils = require(path.join(__dirname, '../utils'));
 
-var pageSchema = new Schema({
-    title: {type: String, default : 'page title', trim: true}
+var schema = new Schema({
+    title: {type: String, trim: true}
   , slug: String
   , body: String
   , footer: String
@@ -14,11 +16,16 @@ var pageSchema = new Schema({
   , menu: String
 });
 
-pageSchema.path('title').validate(function (title) {
+schema.path('title').validate(function (title) {
   return title.length > 0
 }, 'page title cannot be blank');
 
 
+schema.pre('save', function(next) {
+  this.slug = utils.slugify(this.title);
+  
+  next();
+});
 
 
-mongoose.model('Page', pageSchema);
+mongoose.model('Page', schema);

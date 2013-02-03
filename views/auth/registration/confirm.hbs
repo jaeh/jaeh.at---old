@@ -1,0 +1,43 @@
+<div class="message">
+  <header>Hello {{name}}</header>
+  <form method="post">
+    <fieldset>
+      <legend>
+        {{#if errors.norandom}}
+          <div class="error">activation random missing.</div>
+        {{/if}}
+        
+        {{#if errors.noemail}}
+          <div class="error">email missing</div>
+        {{/if}}
+        
+        {{#if errors.nouser}}
+          <div class="error">no matching user has been found in the database.</div>
+        {{/if}}
+        
+        
+        {{#unless errors.norandom}}
+          {{#unless errors.noemail}}
+            {{#unless errors.nouser}}
+              The confirmation code has been sent{{#if email}} to {{email}}{{/if}}. Please check your inbox.
+            {{/unless}}
+          {{/unless}}
+        {{/unless}}
+        
+      </legend>
+
+      <div class="fields">
+        <label for="email">Input your email here:</label>
+        <input type="text" name="email" value="" id="email" />
+      </div>
+      <div class="fields">
+        <label for="random">input your activation random here:</label>
+        <input type="text" name="random" value="" id="random" />
+      </div>
+
+      <div class="fields submit">
+        <input type="submit" value="submit" />
+      </div>
+    </fieldset>
+  </form>
+</div>

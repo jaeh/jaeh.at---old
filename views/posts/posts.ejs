@@ -1,18 +1,79 @@
 <% 
   var ut = locals.utils;
+  
+  var pag = {
+      prev: {
+          show: false
+        , text: 'previous'
+        , url: ''
+      }
+    
+    , next: {
+          show: false
+        , text: 'next'
+        , url: ''
+      }
+    
+    , count: {
+          show: false
+        , text: '10'
+        , start: '0'
+        , end: '10'
+      }
+    , above: {
+        show: true
+    }
+    , below: {
+        show: true
+    }
+  }
+  
+  if( typeof locals.pagination !== 'undefined' ) {
+    var p = locals.pagination;
+    
+    
+    ut.each({ prev: p.prev, next: p.next, count: p.count }, function(paginationLink) {
+      ut.each(paginationLink.value.value, function(pLchild) {%>
+      <%= pLchild %>
+      <%
+        if(typeof pLchild.value !== 'undefined'){
+          pag[paginationLink.key][pLchild.key] = pLchild.value.value;
+        }
+      });
+    });
+  }
 %>
 
 <% include ../header.ejs %>
 
 
 <header>posts index page.</header>
-<div class="pagination">
-  showing 10 posts of <%= locals.postCount %>
-  
-</div>
+
+<% if(pag.above.show == true) { %>
+  <div class="pagination">
+
+    <% if( pag.prev.show == true ) { %>
+      <a class="pag-prev" href="<%= pag.prev.url %>"><%= pag.prev.text %></a>
+    <% } %> 
+    
+    <% if( pag.count.show == true ){ %>
+      showing page <%= pag.count.current %> of <%= pag.count.end %>
+    <% } %>
+    
+    <% if( pag.next.show == true ) { %>
+      <a class="pag-next" href="<%= pag.next.url %>"><%= pag.next.text %></a>
+    <% } %> 
+
+  </div>
+<% } %>
+
+
 <% ut.each(locals.posts, function (p){ %>
   <section class="post<% ut.each(p.categories, function(cat){ %> <%= cat.name %><% }); %>">
-    <header class="<%= p.value.slug %>"><a href="/post/<%=p.value.slug%>"><%= p.value.title %></a></header>
+    <header class="<%= p.value.slug %>">
+      <a href="/post/<%=p.value.slug%>"><%= p.value.title %></a>
+      <div class="createdAt"><%=: p.value.createdAt|momentize %></div>
+    </header>
     <div class="body">
       <%= p.value.body %>
     </div>
@@ -23,6 +84,25 @@
 <% if( ut.count(locals.posts) <= 0 ){ %>
   <div class="noposts">there are no posts to display</div>
 <% } %>
+
+<% if(pag.above.show == true) { %>
+  <div class="pagination">
+
+    <% if( pag.prev.show == true ) { %>
+      <a class="pag-prev" href="<%= pag.prev.url %>"><%= pag.prev.text %></a>
+    <% } %> 
+    
+    <% if( pag.count.show == true ){ %>
+      showing page <%= pag.count.current %> of <%= pag.count.end %>
+    <% } %>
+    
+    <% if( pag.next.show == true ) { %>
+      <a class="pag-next" href="<%= pag.next.url %>"><%= pag.next.text %></a>
+    <% } %> 
+
+  </div>
+<% } %>
+
 
 <% include ../aside.ejs %>
 <% include ../footer.ejs %>

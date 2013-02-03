@@ -1,13 +1,16 @@
+<% 
+  var ut = locals.utils;
+%>
 
-{{#each messages}}
+<% ut.each(locals.messages, function(eachObj){ %>
   <div class="{{class}}">{{text}}</div>
-{{/each}}
+<% } %>
 
 <form action="" method="post">
   <fieldset>
     <legend>Options:</legend>
     
-    {{#each options.opt}}
+    <% ut.each(locals.options.opts}}
       <div class="fields">
         <label for="{{name}}">{{name}}:</label>
         
@@ -20,7 +23,7 @@
         {{/ifTypeEquals}}
 
       </div>
-    {{/each}}
+    <% } %>
     
     <div class="fields">
       <input type="submit" value="save options" />

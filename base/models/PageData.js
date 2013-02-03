@@ -2,8 +2,10 @@
 
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
+  , path = require('path')
+  , utils = require(path.join(__dirname, '../utils'));
 
-var pageDataSchema = new Schema({
+var schema = new Schema({
     title: {type: String, trim: true}
   , slug: String
   , footer: String
@@ -12,17 +14,18 @@ var pageDataSchema = new Schema({
   , createdAt: {type : Date, default : Date.now}
 });
 //~ 
-//~ pageDataSchema.methods.getMenu = function() {
+//~ schema.methods.getMenu = function() {
   //~ 
 //~ }
 
-pageDataSchema.path('title').validate(function (title) {
+schema.path('title').validate(function (title) {
   return title.length > 0
 }, 'page title cannot be blank');
 
-pageDataSchema.pre('save', function(next) {
-  console.log('pageDataSchema has been saved');
+schema.pre('save', function(next) {
+  this.slug = utils.slugify(this.title);
+  
   next();
 });
 
-mongoose.model('PageData', pageDataSchema);
+mongoose.model('PageData', schema);

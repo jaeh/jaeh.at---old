@@ -1,0 +1,31 @@
+<% var ut = locals.utils;
+%>
+
+<% ut.each( locals.messages, function(msg){ %>
+  <div class="<%= css %>"><%= text %></div>
+<% }); %>
+
+<% include header.ejs %>
+
+
+<form action="" method="post">
+  <fieldset>
+    <legend>Options:</legend>
+    <% ut.each(locals.settings.opts, function(setting) { %>
+      <div class="fields">
+        <label for="<%= setting.key %>"><%= setting.key %></label>
+        <%-: setting|variableInputField %>
+      </div>
+    <% }); %>
+    
+    <div class="fields">
+      <input type="submit" value="save options" />
+    </div>
+  </fieldset>
+</form>
+
+
+<% include aside.ejs %>
+
+<% include footer.ejs %>
+

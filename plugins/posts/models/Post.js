@@ -1,10 +1,12 @@
 "use strict";
 
 var mongoose = require('mongoose')
-  , ObjectId = mongoose.Schema.Types.ObjectId
+  //~ , ObjectId = mongoose.Schema.Types.ObjectId
   , Schema = mongoose.Schema
+  , path = require('path')
+  , utils = require(path.join(__dirname, '../../../base/utils'));
 
-var postSchema = new Schema({
+var schema = new Schema({
     title: {type: String, trim: true}
   , slug: String
   , body: String
@@ -20,8 +22,14 @@ var postSchema = new Schema({
   //~ , author: ObjectId
 });
 
-postSchema.path('title').validate(function (title) {
+schema.pre('save', function(next){
+  this.slug = utils.slugify(this.title);
+  
+  next();
+});
+
+schema.path('title').validate(function (title) {
   return title.length > 0
 }, 'page title cannot be blank');
 
-mongoose.model('Post', postSchema);
+mongoose.model('Post', schema);

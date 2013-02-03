@@ -26,7 +26,7 @@ routes.postsadmin = function(req, res, next) {
 
 routes.postadmin = function(req, res, next) {
   if(!req.params || !req.params.slug) {
-    res.redirect('/posts/admin');
+    res.redirect('/postsAdmin');
     return;
   }
 
@@ -39,7 +39,7 @@ routes.postadmin = function(req, res, next) {
       return;
     }
         
-    res.render('posts/admin', {post: post});
+    res.render('posts/postAdmin', {post: post});
     return;
     
   });

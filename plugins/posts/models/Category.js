@@ -2,8 +2,10 @@
 
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
+  , path = require('path')
+  , utils = require(path.join(__dirname, '../../../base/utils'));
 
-var categorySchema = new Schema({
+var schema = new Schema({
     title: {type: String, trim: true}
   , slug: String
   , desc: String
@@ -12,8 +14,15 @@ var categorySchema = new Schema({
   , createdAt: {type : Date, default : Date.now}
 });
 
-categorySchema.path('title').validate(function (title) {
+
+schema.pre('save', function(next){
+  this.slug = utils.slugify(this.title);
+  
+  next();
+});
+
+schema.path('title').validate(function (title) {
   return title.length > 0
 }, 'category title cannot be blank');
 
-mongoose.model('Category', categorySchema);
+mongoose.model('Category', schema);

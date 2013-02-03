@@ -1,53 +1,37 @@
 "use strict";
 
 var mongoose  = require('mongoose')
-  , base = require(__dirname + '/../../base/base');
+  , path = require('path')
+  , base = require(path.join(__dirname, '/../../base/base'))
+  , utils = require(path.join(__dirname, '/../../base/utils'))
+  , settings = require(path.join(__dirname, 'settings'));
 
 
-var setup = module.exports;
+var setup = module.exports = {};
 
-setup.init = function(cb) {
-  console.log('initing posts setup');
-  
-  var Post = mongoose.model('Post');
- 
-  Post.findOne().exec(function(err, post) {
+var bonobo = {};
+
+setup.init = function(bonobo, cb) {
+  bonobo.getPluginSettings(settings, function(err, setting) {
+    //~ console.log('setting=');
+    //~ console.log(setting);
     
-    if(!post) {
-          
-      console.log('no post found, will setup posts plugin now.');
-    
-      updatePageData();
-    
-      var Post = mongoose.model('Post');
-      
-      var numOfPosts = 20;
-      
-      var doneI = 0;
-      
-      for(var i = 0; i <= numOfPosts; i++) {
+    if( !setting.opts.setupDone || !setting.opts.setupDone.value 
+        || utils.getVersionNumber(settings.version.value) > utils.getVersionNumber(setting.opts.version.value)) {
+      setupPostsPlugin(function(err, msg) {
         
-        var post = new Post();
-        post.title = 'post '+i+' title';
-        post.slug = 'post'+i+'title';
-        post.body = 'post '+i+' body';
-        post.footer = 'post '+i+' footer';
+        setting.opts.setupDone.value = true;
         
-        post.save(function(err) {
-                
-          if( doneI >= numOfPosts) {
-            console.log('posts setup complete');
-            
-            var message = "posts setup complete";
-            console.log('post save completed with err '+err+" and message: "+message);
-            cb(err, message);
-          }
-          doneI++;
+        bonobo.updateOrSavePluginSettings(setting, function(err){
+          cb(err, "posts setup has completed");
         });
-      }
+        
+      });
+      
+    }else{
+      cb(null, "posts setup has been completed already, did nothing");
     }
   });
-  
 }
 
 
@@ -59,13 +43,50 @@ function updatePageData() {
   
   meta.mIs.header.push({ url: "/posts", text: "posts", order: 1});
   
-  console.log(pageData);
-  
   if(pageData) {
     pageData.update({meta: meta}, function(err, res) {
       if(err) throw err;
-      
-      console.log('err = '+err+' res ='+res);
+    });
+  }
+}
+
+
+function setupPostsPlugin(cb) {
+  console.log('will setup posts plugin now.');
+
+  updatePageData();
+
+  var Post = mongoose.model('Post');
+  
+  var numOfPosts = 120;
+  
+  var doneI = 0;
+  
+  for(var i = 0; i <= numOfPosts; i++) {
+    
+    var post = new Post();
+    post.title = 'post '+i+' title';
+    
+    post.body = 'post '+i+' body';
+    post.footer = 'post '+i+' footer';
+    post.createdAt = new Date();
+    var minutes = post.createdAt.getMinutes();
+    minutes += i;
+    post.createdAt.setMinutes(minutes);
+    
+    //~ console.log('post.createdAt = '+post.createdAt);
+    
+    post.save(function(err) {
+            
+      if( doneI >= numOfPosts) {
+        //~ console.log('posts setup complete');
+        
+        var message = "posts setup complete";
+        //~ console.log('post save completed with err '+err+" and message: "+message);
+        
+        cb(null, "posts setup complete");
+      }
+      doneI++;
     });
   }
 }

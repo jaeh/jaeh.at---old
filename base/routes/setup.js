@@ -10,7 +10,6 @@ var routes = module.exports = {
     posts: {}  
 };
 
-
 routes.gets.setup = function(req, res) {
   res.render('setup', {showform: "true"});
 }
@@ -20,24 +19,24 @@ routes.posts.setup = function(req, res){
   var PageData = mongoose.model('PageData');
   
   PageData.findOne().exec(function(err, pageData) {
-    console.log('pageData in setup =');
-    console.log(pageData);
-    
-    if(!pageData) {
+    //~ console.log('pageData in setup =');
+    //~ console.log(pageData);
+    //~ 
+    //~ if(!pageData) {
       createPages(function(err, createPageReturn) {
         
         createPageData(function(err, createPageDataInfo) {
           if(err) throw err;
           
           bonobo.DoTheSetup(function(err, messages) {
-            console.log('bonobo.dothesetup called');
-            res.render('setup', {messages: messages});
+            //~ console.log('bonobo.dothesetup called');
+            res.render('setup', {messages: messages, completed: true});
           });
         });
       });
-    }else{
-      res.render('setup', {completed: true});
-    }
+    //~ }else{
+      //~ res.render('setup', {completed: true});
+    //~ }
   });
 }
 

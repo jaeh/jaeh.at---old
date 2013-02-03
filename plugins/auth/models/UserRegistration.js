@@ -1,22 +1,20 @@
 "use strict";
 
+
 var mongoose = require('mongoose')
   , ObjectId = mongoose.Schema.Types.ObjectId
   , Schema = mongoose.Schema
-
+  , path = require('path')
+  , utils = require(path.join(__dirname, "../../../base/utils"));
 
 
 var schema = new Schema({
     name: {type: String, trim: true}
   , slug: String
-  , about: String
-  , role: String
   , email: String
   , password: String
-  , logo: String
-  , meta: {}
-  , createdAt: {type : Date, default : Date.now}
-  //~ , author: ObjectId
+  , createdAt: {type: Date, default: Date.now}
+  , random: String
 });
 
 
@@ -25,15 +23,6 @@ schema.pre('save',function(next) {
   
   next();
 });
-
-
-schema.path('role').validate(function (role) {
-  if(!role) role = "user";
-  
-  return role && (role == "admin" || role == "editor" || role == "moderator" || role == "user");
-  
-}, 'user role has to be admin, editor, moderator or user');
-
 
 schema.path('name').validate(function (title) {
   return title.length > 0
@@ -44,9 +33,10 @@ schema.path('email').validate(function (email) {
   return email.length > 0
 }, 'user email cannot be blank');
 
+
 schema.path('password').validate(function (email) {
   //~ XXX check if this is an email (server.utils will hold this func.)
   return email.length > 0
 }, 'user password cannot be blank');
 
-mongoose.model('User', schema);
+mongoose.model('UserRegistration', schema);

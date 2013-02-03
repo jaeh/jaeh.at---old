@@ -2,8 +2,8 @@
 
 <% var ut = locals.utils; %>
 
-<% if( typeof messages === "object" || typeof messages === "array" ){
-  ut.each(messages, function(msg) {
+<% if( typeof locals.messages === "object" || typeof locals.messages === "array" ){
+  ut.each(locals.messages, function(msg) {
     if( msg ){
       if( msg.message ){ %>
         <%= msg.message %>
@@ -11,6 +11,7 @@
     }
   })
 } %>
+
 <% if( typeof showform !== 'undefined' && showform == "true" ){ %>
   <div class="setupform">
    <form method="post">
