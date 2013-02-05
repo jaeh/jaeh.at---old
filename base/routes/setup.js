@@ -3,7 +3,8 @@
 var mongoose = require('mongoose')
   , slugify = require('../utils').slugify
   , base = require('../base')
-  , bonobo = require('../../bonobo');
+  , bonobo = require('../../bonobo')
+  , path = require('path');
 
 var routes = module.exports = {
     gets: {},
@@ -16,13 +17,11 @@ routes.gets.setup = function(req, res) {
 
 routes.posts.setup = function(req, res){
   
-  var PageData = mongoose.model('PageData');
-  
-  PageData.findOne().exec(function(err, pageData) {
+  mongoose.model('PageData').findOne({'values.appname': "base"}).exec(function(err, pageData) {
     //~ console.log('pageData in setup =');
     //~ console.log(pageData);
     //~ 
-    //~ if(!pageData) {
+    if(!pageData) {
       createPages(function(err, createPageReturn) {
         
         createPageData(function(err, createPageDataInfo) {
@@ -34,9 +33,9 @@ routes.posts.setup = function(req, res){
           });
         });
       });
-    //~ }else{
-      //~ res.render('setup', {completed: true});
-    //~ }
+    }else{
+      res.render('setup', {completed: true});
+    }
   });
 }
 
@@ -44,44 +43,15 @@ function createPageData(cb) {
   //page data does not exist, inserting it
    
   var PageData = mongoose.model("PageData");
- 
+  
   var pageData = new PageData();
   
-  pageData.title = 'jaeh.at',
-  pageData.footer = 'main page footer',
-  pageData.slug = slugify('jaeh.at'),
-  pageData.logo = '/images/logo.png',
-  pageData.meta = {
-    og: {
-      "title": "jaeh.at"
-    },
-    aside: {
-      title: "aside title",
-      body: "aside body",
-      widgets: [
-        { name: "widget 1", title: "widget title", body: "widget body content"},
-        { name: "widget 2", title: "widget 2 title", body: "widget 2 body content"} 
-      ]
-    },
-    mIs: {
-      header: [
-        { url: "/", text: "home", menu: "header"},
-        { url: "/about", text: "about", menu: "header"}
-      ],
-      footer: [
-        { url: "/impressum", text: "impressum", menu: "footer"}
-      ]
-    }
-  }
-  
-  base.locals.pageData = pageData;
+  base.locals.pageData = pageData.values = require(path.join(__dirname, "..", "settings")).pageData;
   
   pageData.save(function(err) {
     var ret = err;
     
-    if(!err) ret = "pagedata setup successfull";
-    
-    console.log('saved pageData');
+    if(!err) ret = "pagedata setup was a success";
 
     cb(err, ret);
   });

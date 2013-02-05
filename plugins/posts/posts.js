@@ -36,14 +36,14 @@ posts.setupRoutes = function(bonobo, cb) {
     posts.reqs.gets.push({url: '/posts/:pagination', route: posts.routes.posts});
     posts.reqs.gets.push({url: '/post/:slug', route: posts.routes.post});
     
-    
     var adminExists = fs.existsSync(path.join(__dirname, "..", "admin"));
     
-    console.log('adminExists ='+adminExists);
+    //~ console.log('adminExists ='+adminExists);
     
     if(adminExists) {
       posts.reqs.gets.push({url: '/admin/posts', route: posts.admin.routes.postsadmin});
     }
+    
     cb();
   });
 }

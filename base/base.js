@@ -5,7 +5,8 @@ var express = require('express')
   , fs = require('fs')
   , path = require('path')
   , passport = require('passport')
-  , moment = require('moment');
+  , moment = require('moment')
+  , stylus = require('stylus');
 
 var base = module.exports = express();
 
@@ -28,7 +29,10 @@ base.config = function(rootDir) {
     base.set('port', process.env.PORT || 3000);
     
     base.set('views', path.join(rootDir, 'views')); // use appRootDir/views as template directory
-    
+    //~ 
+    //~ ejs.open = '{{';
+    //~ ejs.close = '}}';
+
     ejs.filters.momentize = function(date){
       //~ return moment(date).fromNow();
       return date;
@@ -38,11 +42,24 @@ base.config = function(rootDir) {
       
     base.use(express.favicon(path.join(rootDir, '/public/images/favicon.ico')));
     
-    base.use(require('stylus').middleware(path.join(rootDir, 'public')));
+//    base.use(require('stylus').middleware(path.join(rootDir, 'public')));
+    function compile(str, path) {
+      return stylus(str)
+        .set('filename', path)
+        .set('compress', true);
+        //.use(nib());
+    }
+
+    base.use(stylus.middleware({
+        src: path.join(__dirname, 'public')
+      , compile: compile
+    }));
     
     base.use(express.static(path.join(rootDir, 'public')));
     
     base.use(express.logger('dev'));
+    
+    base.use(express.compress());
     base.use(express.cookieParser('etgvwezgwegwgwgw'));
     base.use(express.bodyParser());
     base.use(express.methodOverride());
@@ -61,28 +78,72 @@ base.config = function(rootDir) {
       base.locals.utils = require(path.join(__dirname, "utils"));
     
       //~ XXX todo: change this to update every few minutes
-      if(!base.locals.pageData) {
+     
         
-        base.locals.pageData = false;
+      mongoose.model("PageData")
+      .findOne({"values.appname": "base"})
+      .exec(function(err, pageData) {
+        if(pageData && pageData.values) {
+          base.locals.pageData = pageData.values;
         
-        mongoose.model("PageData")
-        .findOne()
-        .exec(function(err, pageData) {      
-          if(pageData) {
-            base.locals.pageData = pageData;
+        }else{
+          if(req.path.indexOf('setup') === -1) {
+            res.redirect('/setup');
+            return;
           }
-          next();
-        });
-      
-      }else{
+        }
+        
         next();
-      }
-      
+      });      
     });
 
     //route page calls last
     base.use(base.router);
 
   });
+}
 
+base.GetPageData = function(cb) {
+  
+  var PageData = mongoose.model("PageData");
+  
+  PageData.findOne({'values.appname': 'base'}).exec(function(err, pageData) {
+    
+    if(!pageData ) {
+      pageData = new PageData();
+      pageData.values = require(path.join(__dirname, 'settings')).pageData;
+      pageData.save(function(err){
+          returnPageData(null, pageData, cb);
+      });
+      return;
+    }
+    
+    returnPageData(null, pageData, cb);
+  });
+}
+
+base.UpdatePageData = function(object, cb) {
+  if(!object || !cb) {
+    cb("base.UpdatePageData(object, callback) called with missing arguments"); 
+  }
+  
+  var PageData = mongoose.model("PageData");
+  
+  PageData.findOne({'values.appname': 'base'}).exec(function(err, pageData) {
+ 
+    if(!pageData ) {
+      pageData = new PageData();
+    }
+
+    pageData.values = object;
+        
+    pageData.save(function(err) {
+      returnPageData(err, pageData, cb);
+    });
+    
+  });
+}
+
+function returnPageData (err, pageData, cb) {
+  cb(err, pageData);
 }

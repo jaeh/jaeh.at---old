@@ -6,19 +6,23 @@ var mongoose = require('mongoose')
   , utils = require(path.join(__dirname, '../utils'));
 
 var schema = new Schema({
-    title: {type: String, trim: true}
-  , slug: String
-  , footer: String
-  , logo: String
-  , meta: {}
-  , createdAt: {type : Date, default : Date.now}
+  values: {
+      title: {type: String, trim: true}
+    , slug: String
+    , footer: String
+    , appname: String
+    , logo: String
+    , meta: {}
+    , createdAt: {type : Date, default : Date.now }
+  }
 });
+
 //~ 
 //~ schema.methods.getMenu = function() {
   //~ 
 //~ }
 
-schema.path('title').validate(function (title) {
+schema.path('values.title').validate(function (title) {
   return title.length > 0
 }, 'page title cannot be blank');
 

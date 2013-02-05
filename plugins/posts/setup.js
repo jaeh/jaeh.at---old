@@ -37,17 +37,17 @@ setup.init = function(bonobo, cb) {
 
 function updatePageData() {
   
-  var pageData = base.locals.pageData;
+  base.GetPageData(function(err, pageData) {
+    
+      var values = pageData.values;
+      
+      values.meta.mIs.header.push({ url: "/posts", text: "posts", order: 1});
+      
+      base.UpdatePageData(values, function(err, res) {
+          if(err) throw err;
+      });
+  });
   
-  var meta = pageData.meta;
-  
-  meta.mIs.header.push({ url: "/posts", text: "posts", order: 1});
-  
-  if(pageData) {
-    pageData.update({meta: meta}, function(err, res) {
-      if(err) throw err;
-    });
-  }
 }
 
 

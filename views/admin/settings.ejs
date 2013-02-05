@@ -3,24 +3,24 @@
 %>
 
 <% ut.each(locals.messages, function(eachObj){ %>
-  <div class="{{class}}">{{text}}</div>
+  <div class="<%class%>"><%text%></div>
 <% } %>
 
 <form action="" method="post">
   <fieldset>
     <legend>Options:</legend>
     
-    <% ut.each(locals.options.opts}}
+    <% ut.each(locals.options.opts%>
       <div class="fields">
-        <label for="{{name}}">{{name}}:</label>
+        <label for="<%name%>"><%name%>:</label>
         
-        {{#ifTypeEquals "string"}}
-          <textarea name="{{name}}" id="{{name}}" cols="50" rows="1">{{value}}</textarea>
-        {{/ifTypeEquals}}
+        <%#ifTypeEquals "string"%>
+          <textarea name="<%name%>" id="<%name%>" cols="50" rows="1"><%value%></textarea>
+        <%/ifTypeEquals%>
 
-        {{#ifTypeEquals "boolean"}}
-          <input type="checkbox" name="{{name}}" {{#if value}}checked="checked" {{/if}} id="{{name}}" />
-        {{/ifTypeEquals}}
+        <%#ifTypeEquals "boolean"%>
+          <input type="checkbox" name="<%name%>" <%#if value%>checked="checked" <%/if%> id="<%name%>" />
+        <%/ifTypeEquals%>
 
       </div>
     <% } %>

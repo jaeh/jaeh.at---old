@@ -1,47 +1,7 @@
 <% 
   var ut = locals.utils;
   
-  var pag = {
-      prev: {
-          show: false
-        , text: 'previous'
-        , url: ''
-      }
-    
-    , next: {
-          show: false
-        , text: 'next'
-        , url: ''
-      }
-    
-    , count: {
-          show: false
-        , text: '10'
-        , start: '0'
-        , end: '10'
-      }
-    , above: {
-        show: true
-    }
-    , below: {
-        show: true
-    }
-  }
-  
-  if( typeof locals.pagination !== 'undefined' ) {
-    var p = locals.pagination;
-    
-    
-    ut.each({ prev: p.prev, next: p.next, count: p.count }, function(paginationLink) {
-      ut.each(paginationLink.value.value, function(pLchild) {%>
-      <%= pLchild %>
-      <%
-        if(typeof pLchild.value !== 'undefined'){
-          pag[paginationLink.key][pLchild.key] = pLchild.value.value;
-        }
-      });
-    });
-  }
+  var pag = locals.pagination;
 %>
 
 <% include ../header.ejs %>

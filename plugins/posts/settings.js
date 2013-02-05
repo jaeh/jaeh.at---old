@@ -18,4 +18,52 @@ var settings = module.exports = {
       , type: "list"
       , desc: "this variables control the pagination settings."
     }
+  , post_list: {
+        value: { 
+          show: {
+            value: {
+                date: { value: true, type: "bool", desc: "show the date of publishing in the header of the post"}
+              , author: { 
+                    value: {
+                        show: { value: true, type: "bool", desc: "show the creator of the post"}
+                      , vcard: { 
+                          value: {
+                              show: { value: true, type: "bool", desc: "show the vcard (true) or show the name only (false)"}
+                            , position: { value: "above", type: "option", options: ["above", "below"], desc: "show the vcard above or below the post (only valid if vcard selected)"}
+                          }
+                        }
+                    }
+                  , type: "list"
+                  , desc: "some options to change the display of the post author"
+                }
+            }
+          }
+        }
+      , type: "list"
+      , desc: "handles the display of posts in lists with multiple posts"
+    }
+  , post_single: {
+        value: { 
+          show: {
+            value: {
+                date: { value: true, type: "bool", desc: "show the date of publishing in the header of the post"}
+              , author: { 
+                    value: {
+                        show: { value: true, type: "bool", desc: "show the creator of the post"}
+                      , vcard: { 
+                          value: {
+                              show: { value: true, type: "bool", desc: "show the vcard (true) or show the name only (false)"}
+                            , position: { value: "above", type: "option", options: ["above", "below"], desc: "show the vcard above or below the post (only valid if vcard selected)"}
+                          }
+                        }
+                    }
+                  , type: "list"
+                  , desc: "some options to change the display of the post author"
+                }
+            }
+          }
+        }
+      , type: "list"
+      , desc: "handles the display of single posts"
+    }
 };

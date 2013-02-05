@@ -14,7 +14,7 @@ server.settings = {
     mongodb: {
         url: '127.0.0.1'
       , port: "27017"
-      , db: "fnord23"
+      , db: "fnord22222222222222"
     }
   , port: '3000'
   , 
@@ -22,6 +22,7 @@ server.settings = {
 server.utils = require(path.join(server.rootDir, "/base/utils"));
 
 server.base = require(path.join(server.rootDir, "/base/base")).init();
+server.admin = false;
 
 //plugin management
 require('./bonobo').init(path.join(server.rootDir, 'plugins'), function(bonobo) {
@@ -47,6 +48,11 @@ require('./bonobo').init(path.join(server.rootDir, 'plugins'), function(bonobo) 
       
     //start the server.base server
     if(server.base) {
+      http.createServer(server.base).listen(server.base.get('port'), function(){
+        console.log("Express server listening on port " + server.base.get('port'));
+      });
+    }
+    if(server.admin) {
       http.createServer(server.base).listen(server.base.get('port'), function(){
         console.log("Express server listening on port " + server.base.get('port'));
       });

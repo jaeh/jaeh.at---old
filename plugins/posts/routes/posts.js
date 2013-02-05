@@ -71,7 +71,7 @@ routes.posts = function(req, res, next) {
             }
             
           , count: {
-                show: settings.pagination.value.show.value.count.value || false
+                show: settings.pagination.value.show.value.count.value || true
               , current: currentPaginationPage
               , end: endPaginationPage
             }
@@ -83,7 +83,16 @@ routes.posts = function(req, res, next) {
           }
       };
       
-      res.render('posts/posts', {posts: posts, pagination: pagination});
+      var show = {
+          date: settings.post_list.value.show.value.date.value || true
+        , author: {
+              show: settings.post_list.value.show.value.author.value.show.value || true
+            , vcard: settings.post_list.value.show.value.author.value.vcard.value.show.value || true
+            , position: settings.post_list.value.show.value.author.value.vcard.value.position.value || "above"
+        }
+      }
+      
+      res.render('posts/posts', {posts: posts, pagination: pagination, show: show});
       return;
       
     });

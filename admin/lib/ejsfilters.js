@@ -35,6 +35,15 @@ var filters = module.exports = {
       //str will be very different here, return now
       return str;
     }
+    if(val.type === "option") {
+      var v = val.options;
+      
+      str = '<select name="'+value.key+'" id="'+value.key+'">';
+      utils.each(val.options, function(v) {
+        str += '<option value="'+v.value+'">'+v.value+'</option>'
+      }
+      
+    }
     
     if( val.type === "version" ) {
       var v = val.value.split(".");

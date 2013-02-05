@@ -43,7 +43,7 @@ admin.config = function(viewRootDir) {
     admin.use(express.static(path.join(rootDir, 'public')));
     
     admin.use(express.logger('dev'));
-    admin.use(express.cookieParser('etgvwezgwegwgwgw'));
+    admin.use(express.cookieParser('allhaileris'));
     admin.use(express.bodyParser());
     admin.use(express.methodOverride());
     
@@ -64,7 +64,7 @@ admin.config = function(viewRootDir) {
         admin.locals.pageData = false;
         
         mongoose.model("PageData")
-        .findOne()
+        .findOne({slug: "admin"})
         .exec(function(err, pageData) {      
           if(pageData) {
             admin.locals.pageData = pageData;
