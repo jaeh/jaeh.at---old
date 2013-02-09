@@ -3,34 +3,38 @@
     , mIs = false
     , ut = locals.utils;
   
-  if( typeof locals.pageData == 'object' ) {
+  if( typeof locals.pageData === 'object' ) {
     pD = locals.pageData;
-    if(typeof pD.meta !== 'undefined' && typeof pD.meta.mIs !== 'undefined' && typeof pD.meta.mIs.header !== 'undefined') {
-      mIs = pD.meta.mIs.header;
-    }
   }
+  
 %>
+
 <!doctype html>
 <html>
   <head>
     <title><%= pD.title %></title>
+  
+    <link rel='stylesheet' href='/css/style.css'>
+    <link rel='stylesheet' href='/css/adminstyle.css'>
   </head>
 
   <body>
     <header>
       <div id="logo">
         <% if (pD.logo) { %> 
-          <img src="<%= pD.logo %>" alt="<%= pD.title %>">
+          <img src="<%= pD.logo.src %>" alt="<%= pD.logo.alt %>" title="<%= pD.logo.title %>">
         <% }else{ %>
           <%= pD.title %>
         <% } %>
       </div>
       
-      <% if ( typeof mIs !== 'undefined' && mIs != false ) { %>
+      <% if ( typeof menuItems !== 'undefined' && ut.count(menuItems) > 0 ) { %>
         <nav>
           <ul>
-            <% ut.each(mIs, function(mI){ %>
-              <li><a href="<%= mI.value.url %>"><%= mI.value.text %></a></li>
+            <% ut.each(menuItems.header, function(menuItem){ %>
+              <li>
+                <a href="<%= menuItem.value.url %>"><%= menuItem.value.text %></a>
+              </li>
             <% }) %>
           </ul>
         </nav>

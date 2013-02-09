@@ -19,9 +19,6 @@ admin.init = function(bonobo, cb) {
   
   admin.modelPaths.push(path.join(admin.rootDir, 'models/'));
   
-  
-  ejs.filters.variableInputField = require(path.join(__dirname, 'lib', 'ejsfilters')).variableInputField;
-  
   cb(null, admin);
 }
 

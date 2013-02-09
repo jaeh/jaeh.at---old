@@ -2,21 +2,50 @@
 
 <% var ut = locals.utils; %>
 
-<% if( typeof locals.messages === "object" || typeof locals.messages === "array" ){
-  ut.each(locals.messages, function(msg) {
-    if( msg ){
-      if( msg.message ){ %>
-        <%= msg.message %>
-      <% }
-    }
+
+
+<% if( typeof locals.errs === "object" || typeof locals.errs === "array" ){
+  ut.each(locals.errs, function(err) {
+    if( typeof err.value !== 'undefined' ){ %>
+      <% ut.each(err.value, function(er){%>
+        <% if( er.value.message) { %>
+          <div class="<%= er.value.css %>"><%= er.value.message %></div>
+        <% } %>
+    <% });}
   })
 } %>
 
+
+<% if( typeof locals.msgs === "object" || typeof locals.msgs === "array" ){
+  ut.each(locals.msgs, function(msg) {
+    if( typeof msg.value !== 'undefined' ){ %>
+      <% ut.each(msg.value, function(ms){%>
+        <% if( ms.value.message) { %>
+          <div class="<%= ms.value.css %>"><%= ms.value.message %></div>
+        <% } %>
+    <% });}
+  })
+} %>
+
+
 <% if( typeof showform !== 'undefined' && showform == "true" ){ %>
   <div class="setupform">
-   <form method="post">
-     <fieldset>
-       <legend>Press the button to start the setup:</legend>
+    <form method="post">
+      <fieldset>
+        <legend>These variables are the defaults for dry-kiss. you can change them now or later, however you wish.</legend>
+        
+       <div class="fields">
+         <input name="submit" type="submit" value="start setup" />
+       </div>
+        
+        <% ut.each(locals.settings, function(setting) { %>
+            <div class="form-fields">
+              <header><%= setting.key %>:</header>
+              <% include variableInputTable %>
+            </div>
+        <%});%>
+        
+       
        <div class="fields">
          <input name="submit" type="submit" value="start setup" />
        </div>

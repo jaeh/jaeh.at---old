@@ -1,0 +1,8 @@
+
+  <label class="desc"><%= desc %></label>
+  <dl>
+    <% ut.each(val, function(v) { %>
+      <dt><%= v.key %></dt>
+      <dd> <% include listInputField %></dd>
+    <% })%>
+  </dl>

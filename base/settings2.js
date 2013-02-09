@@ -12,17 +12,7 @@ var settings = module.exports = {
         title     : {value: 'jaeh.at', type: "text", desc: "this value is being used in numerous places to display the name of this page"}
       , footer    : {value: 'main page footer', type: 'text', desc: 'this is the main page footer, shown on every page'}
       , appname   : {value: 'base', type: 'text', desc: 'the name of this application for database requests'}
-      , logo      : {
-          type: 'imagelist'
-        , desc: 'the main page logo, if not set the title will be used instead'
-        , value: {
-            src   : { desc: "the url src of the logo, can be relative or absolute", type: "text", value: '/images/logo.png'}
-          , alt   : { desc: "the alt of the logo, will be shown if no image file is found", type: "text", value: "jaeh.at"}
-          , title : { desc: "the title of the logo, will be shown when the logo is hovered", type: "text", value: "jaeh.at"}
-          }
-        }
-      
-      , version   : {value: '0.0.1', type: "version", desc: 'the version number of the pageData.'}
+      , logo      : {value: '/images/logo.png', type: 'text', desc: 'the main page logo, if not set the title will be used instead'}
       , meta      : {
           type: "list"
         , desc: "the metadata of the pageData"
@@ -58,7 +48,6 @@ var settings = module.exports = {
           , text: {value: "home", type: "text", desc: "the link text"}
           , menu: {value: "header", type: "text", desc: "the menu this link should appear in"}
           , pos: {value: 1, type: "number", desc: "the position priority this link has, 0 = highest, n = lowest"}
-          , published: {value: true, type: "bool", desc: "will this be shown in menus?"}
         }
       }
       , about: {
@@ -69,7 +58,6 @@ var settings = module.exports = {
           , text: {value: "about", type: "text", desc: "the link text"}
           , menu: {value: "header", type: "text", desc: "the menu this link should appear in"}
           , pos: {value: 2, type: "number", desc: "the position priority this link has, 0 = highest, n = lowest"}
-          , published: {value: true, type: "bool", desc: "will this be shown in menus?"}
         }
       }
       , impressum: {
@@ -80,7 +68,6 @@ var settings = module.exports = {
           , text: {value: "impressum", type: "text", desc: "the link text"}
           , menu: {value: "footer", type: "text", desc: "the menu this link should appear in"}
           , pos: {value: 1, type: "number", desc: "the position priority this link has, 0 = highest, n = lowest"}
-          , published: {value: true, type: "bool", desc: "will this be shown in menus?"}
         }
       }
     }
@@ -90,21 +77,16 @@ var settings = module.exports = {
     , desc: "the pages that will be created on setup."
     , value: {
         "4oh4": { 
-          type: "list"
-        , desc: "this is the 4oh4 page. it is shown when a user tries to view a url that doesnt exist or if something goes wrong."
-        , value: {
-            title : {value: '4oh4', type: "text", desc: "the page title"}
-          , body  : {value: '4oh4 page body', type: "textarea", desc: "the page body"}
-          , footer: {value: '4oh4 page footer', type: "textarea", desc: "the page footer"}
-          , published: {value: true, type: "bool", desc: "will this be shown in menus?"}
-          , logo  : {
-              type: "imagelist"
-            , desc: "the logo data for this page, leave blank if not needed"
-            , value: {
-                src: {value: '/images/pagelogos/4oh4.png', type: "text", desc: "the link to the image"}
-              , title: {value: '4oh4 logo title', type: "text", desc: "the hover title of the image"}
-              , alt: {value: '4oh logo alt', type: "text", desc: "the alternative text of the image"}
-            }
+          title : {value: '4oh4 page title', type: "text", desc: "the page title"}
+        , body  : {value: '4oh4 page body', type: "textarea", desc: "the page body"}
+        , footer: {value: '4oh4 page footer', type: "textarea", desc: "the page footer"}
+        , logo  : {
+            type: "list"
+          , desc: "the logo data for this page, leave blank if not needed"
+          , value: {
+              src: {value: '/images/pagelogos/4oh4.png', type: "text", desc: "the link to the image"}
+            , title: {value: '4oh4 logo title', type: "text", desc: "the hover title of the image"}
+            , alt: {value: '4oh logo alt', type: "text", desc: "the alternative text of the image"}
           }
         }
       }
@@ -112,12 +94,11 @@ var settings = module.exports = {
           type: "list"
         , desc: "this is the home page, it will be the first entry point for most users."
         , value: {
-            title : {value: 'home', type: "text", desc: "the page title"}
+            title : {value: 'home page title', type: "text", desc: "the page title"}
           , body  : {value: 'home page body', type: "textarea", desc: "the page body"}
           , footer: {value: 'home page footer', type: "textarea", desc: "the page footer"}
-          , published: {value: true, type: "bool", desc: "will this be shown in menus?"}
           , logo  : {
-              type: "imagelist"
+              type: "list"
             , desc: "the logo data for this page, leave blank if not needed"
             , value: {
                 src: {value: '/images/pagelogos/home.png', type: "text", desc: "the link to the image"}

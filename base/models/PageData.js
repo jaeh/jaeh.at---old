@@ -11,7 +11,7 @@ var schema = new Schema({
     , slug: String
     , footer: String
     , appname: String
-    , logo: String
+    , logo: {src: String, alt: String, title: String}
     , meta: {}
     , createdAt: {type : Date, default : Date.now }
   }

@@ -12,41 +12,47 @@ var setup = module.exports = {};
 var bonobo = {};
 
 setup.init = function(bonobo, cb) {
-  bonobo.getPluginSettings(settings, function(err, setting) {
-    //~ console.log('setting=');
-    //~ console.log(setting);
+  var errs = []
+    , msgs = []
+    , i = 0;
     
-    if( !setting.opts.setupDone || !setting.opts.setupDone.value 
-        || utils.getVersionNumber(settings.version.value) > utils.getVersionNumber(setting.opts.version.value)) {
-      setupPostsPlugin(function(err, msg) {
+    
+  bonobo.getPluginSettings(settings, function(err, setting) {
+    
+    if(err) errs.push({message: err, css: 'fail'});
+    
+    if(  !setting.opts.setupDone 
+      || !setting.opts.setupDone.value 
+      || utils.getVersionNumber(settings.version.value) > utils.getVersionNumber(setting.opts.version.value)
+      ) {
+      
+      setupPostsPlugin(function(errs, msgs) {
         
         setting.opts.setupDone.value = true;
         
-        bonobo.updateOrSavePluginSettings(setting, function(err){
-          cb(err, "posts setup has completed");
+        bonobo.updateOrSavePluginSettings(setting, function(errs, msgs){
+          
+          if(errs.length == 0) {
+            msgs.push({message: 'posts setup successful', css: 'win'});
+          }else{
+            errs.push({message: 'posts setup completed with errors', css: 'fail'});
+          }
+          
+          cb(errs, msgs);
         });
         
       });
       
     }else{
-      cb(null, "posts setup has been completed already, did nothing");
+      msgs.push({message: "posts setup has been completed already, did nothing", css: 'meh'});
+      
+      cb(errs, msgs);
     }
   });
 }
 
 
-function updatePageData() {
-  
-  base.GetPageData(function(err, pageData) {
-    
-      var values = pageData.values;
-      
-      values.meta.mIs.header.push({ url: "/posts", text: "posts", order: 1});
-      
-      base.UpdatePageData(values, function(err, res) {
-          if(err) throw err;
-      });
-  });
+function AddMenuItems(cb, errs, msgs) {
   
 }
 
@@ -54,8 +60,7 @@ function updatePageData() {
 function setupPostsPlugin(cb) {
   console.log('will setup posts plugin now.');
 
-  updatePageData();
-
+  
   var Post = mongoose.model('Post');
   
   var numOfPosts = 120;

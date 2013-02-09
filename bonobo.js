@@ -6,7 +6,6 @@
 var path      = require('path')
   , fs        = require('fs')
   , mongoose  = require('mongoose')
-  , base = require(path.join(__dirname,'base/base'))
   , utils = require(path.join(__dirname,'base/utils'))
   , server = require(path.join(__dirname, 'server')); 
 
@@ -19,6 +18,9 @@ var bonobo = module.exports = {
   
     //will be added to to enable models in plugins
   , modelPaths : []
+  
+    //these will be used in base.config to setup middleware for the various plugins
+  , middleWare: []
   
     //reqs holds the http requests the plugins register  
   , reqs : {
@@ -55,10 +57,10 @@ var messages = [];
   
 bonobo.DoTheSetup = function(cb) {
   
-  //~ console.log('bonobo.plugins length='+server.utils.getObjectLength(bonobo.plugins)+" object=");
-  //~ console.log(bonobo.plugins );
-  
-  var setups = [];
+  var errs = []
+    , msgs = []
+    , setups = []
+    , i = 0;
   
   //execute the setupscript for each plugin
   for(var idx in bonobo.plugins) {
@@ -78,37 +80,49 @@ bonobo.DoTheSetup = function(cb) {
     }
   }
   
-  //~ console.log('setups.length ='+setups.length);
   
-  for(var i = 0; i < setups.length; i++) {
-    var setup = setups[i];
+  utils.each(setups, function(setUp) {
+    var setup = setUp.value;
     
     if(setup && setup.init && typeof setup.init === 'function') {
      
-      setup.init(bonobo, function(err, message) {
-        var msgs = message;
+      setup.init(bonobo, function(err, msg) {
         
-        if(typeof message == "string") {
-          msgs = [message];
-        }
-      //~ 
-        //~ console.log('setup messages:');
-        //~ for(var idx in msgs) {
-          //~ console.log(msgs[idx]);
-        //~ }
-                //~ 
-        if(i >= setups.length -1) {
-          
+        if(err) utils.each(errs,function(err){errs.push(err)});
+        if(msg) utils.each(msgs,function(msg){msgs.push(msg)});
+        
+        i++;
+        
+        console.log(i+' i >= setups.length '+setups.length);
+        
+        if(i >= utils.count(setups) ) {
           //this returns to the base setup route in ./base/routes/setup and shows the setup view
-          cb(err, messages);
+          cb(errs, msgs);
         }
       });
     }
-  }
+  });
 }
 
 
-bonobo.DoThemModels = function() {
+bonobo.DoTheMiddleWare = function(base, req,res, next) {
+  var i = 0;
+  
+  utils.each(bonobo.middleWare, function(mW) {
+    if(typeof mW === 'function') {
+      base.use(mW);
+    }
+    
+    i++;
+    
+    console.log('i = '+i+' utils.count(bonobo.middleWare) = '+utils.count(bonobo.middleWare));
+    if(i >= utils.count(bonobo.middleWare)) {
+      next();
+    }
+  });
+}
+
+bonobo.DoThemModels = function(base, cb) {
   
   base.modelPaths.push(path.join(base.rootDir, '/models'));
   
@@ -139,9 +153,11 @@ bonobo.DoThemModels = function() {
       });
     }
   }
+  
+  cb(null);
 }
 
-bonobo.RouteThemAll = function(cb) {
+bonobo.RouteThemAll = function(base, cb) {
  
   //first handle errors:
   //load and setup routes
@@ -163,8 +179,8 @@ bonobo.RouteThemAll = function(cb) {
     if(pl && pl.setupRoutes && typeof pl.setupRoutes === "function") {
       pl.setupRoutes(bonobo, function() {
        
-        if(doneI >= utils.getObjectLength( bonobo.plugins) ) {
-          //~ console.log('plugin setuproutes doneI ='+doneI+" bonobo.plugins.length = "+utils.getObjectLength(bonobo.plugins));
+        if(doneI >= utils.count( bonobo.plugins) ) {
+          //~ console.log('plugin setuproutes doneI ='+doneI+" bonobo.plugins.length = "+utils.count(bonobo.plugins));
         
                
           // setup page requests
@@ -300,15 +316,35 @@ bonobo.updateOrSavePluginSettings = function(pluginSettings, cb) {
     console.log('invalid settings object passed to bonobo.updateOrSavePluginSettings');
   }
   
+  var errs = []
+    , msgs = [];
+    
   mongoose.model("Setting").findOne({slug: utils.slugify(pluginSettings.name.value)}, function(err, setting) {
+    
+    if(err) {
+      errs.push({message: err, css: 'fail'});
+    }
     
     if(!setting) {
       pluginSettings.save(function(err,msg) {
-        cb(err, "pluginSettings saved to db for first time");
+        
+        if(errs.length == 0) {
+          msgs.push({message: 'pluginSettings for '+pluginSettings.name.value+' saved successful', css: 'win'});
+        }else{
+          errs.push({message: 'pluginSettings for '+pluginSettings.name.value+' saved with errors', css: 'fail'});
+        }
+        
+        cb(errs, msgs);
       });
     }else{
       setting.update({$set: {opts: pluginSettings.opts.value}},function(err) {
-        cb(err, "pluginSettings updated in the db.");
+         if(errs.length == 0) {
+          msgs.push({message: 'pluginSettings for '+pluginSettings.name.value+' updated successful', css: 'win'});
+        }else{
+          errs.push({message: 'pluginSettings for '+pluginSettings.name.value+' updated with errors', css: 'fail'});
+        }
+        
+        cb(errs, msgs);
       });
     }
     

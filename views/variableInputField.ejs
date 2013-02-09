@@ -1,0 +1,55 @@
+<% 
+  var val  = set.value.value
+    , desc = set.value.desc
+    , type = set.value.type;
+%>
+  
+
+
+<% if(type === "text") { %>
+  <input type="text" class="<%= type %>" value="<%= val %>" name="<%= id %>" id="<%= id %>" />
+<% } %>
+
+
+<% if( type === 'bool' || type === 'boolean' ){ %>
+    <input name="<%= id %>" id="<%= id %>" class="<%= type %>" type="checkbox"<% if(val == true) {%> checked<% } %> />
+<% } %>
+
+
+<% if(type === "option") { %>
+
+  <select name="<%= id %>" id="<%= id %>" class="<%= type %>">
+  
+    <% utils.each(val.options, function(v) { %>
+      <option value="<%= v.value %>"><%= v.value %></option>
+    <% }); %>
+  </select>
+<% } %>
+
+
+<% if( type === "version" ) { %>
+  <% var v = val.split("."); %>
+  
+  <% utils.each(v, function(vi) { %>
+    <input class="compact <%= type %>" type="number" maxlength="1" min="0" max="99" value="<%= vi.value %>" name="<%= id %>-<%= vi.key %>" id="<%= id %>-<%= vi.key %>" />
+  <% }); %>
+<% } %>
+  
+
+<% if( type === "number"){ %>
+  <input class="compact <%= type %>" type="number" maxlength="1" min="0" max="99" value="<%= val %>" name="<%= id %>" id="<%= id %>" />
+<% } %>
+
+<% if( type === "textarea" ){ %>
+  <textarea rows="4" cols="30" name="<%= id %>" id="<%= id %>" class="<%= type %>"><%= val %></textarea>
+<% } %>
+
+
+<% if( type !== "list" ){ %>
+
+  <% if(typeof desc !== "undefined"){ %>
+    <label class="desc <%= type %>" for="<%= id %>"><%= desc %></label>
+  <% } %>
+
+<% } %>
+

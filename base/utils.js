@@ -7,17 +7,6 @@ var utils = module.exports = {
       cb(null, utils);
     }
 
-  , getObjectLength : function(obj) {
-      var size = 0
-        , key;
-      
-      for (key in obj) {
-          if (obj.hasOwnProperty(key)) size++;
-      }
-      
-      return size;
-    }
-
 
   , slugify : function(slug) {
     
@@ -98,9 +87,67 @@ var utils = module.exports = {
       }
       
       var count = 0;
-      for(var i in arrayOrObject) {
-        count++;
+      
+      for(var key in arrayOrObject) {
+        if (arrayOrObject.hasOwnProperty(key)) count++;
       }
       return count;
     }
+  , 
+  requestBodyToJSON: function(reqB){
+
+    var reqBody = {};
+    
+    for(var keys in reqB) {
+      
+      var keyArr = keys.split('-');
+      
+      switch(keyArr.length){
+        case 1:
+          if(keyArr[0] == 'submit'){break;}
+          if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
+          reqBody[keyArr[0]] = reqB[keys];
+        break;
+        
+        case 2:
+          if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
+          if(!reqBody[keyArr[0]][keyArr[1]]) reqBody[keyArr[0]][keyArr[1]] = {};
+          
+          reqBody[keyArr[0]][keyArr[1]] = reqB[keys];
+        break;
+        
+        case 3:
+          if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
+          if(!reqBody[keyArr[0]][keyArr[1]]) reqBody[keyArr[0]][keyArr[1]] = {};
+          if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]] = {};
+          
+          reqBody[keyArr[0]][keyArr[1]][keyArr[2]] = reqB[keys];
+        break;
+        
+        case 4:
+        
+          if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
+          if(!reqBody[keyArr[0]][keyArr[1]]) reqBody[keyArr[0]][keyArr[1]] = {};
+          if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]] = {};
+          if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]] = {};
+          
+          reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]] = reqB[keys];
+        break;
+        
+        case 5:
+        
+          if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
+          if(!reqBody[keyArr[0]][keyArr[1]]) reqBody[keyArr[0]][keyArr[1]] = {};
+          if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]] = {};
+          if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]] = {};
+          if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]][keyArr[4]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]][keyArr[4]] = {};
+          
+          reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]][keyArr[4]] = reqB[keys];
+        break;
+      }
+    }
+    
+      return reqBody;
+  }
+    
 }

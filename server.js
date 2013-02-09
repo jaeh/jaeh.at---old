@@ -14,49 +14,43 @@ server.settings = {
     mongodb: {
         url: '127.0.0.1'
       , port: "27017"
-      , db: "fnord22222222222222"
+      , db: "fnord2"
     }
   , port: '3000'
   , 
 }
 server.utils = require(path.join(server.rootDir, "/base/utils"));
 
-server.base = require(path.join(server.rootDir, "/base/base")).init();
-server.admin = false;
+require(path.join(server.rootDir, "/base/base")).init(function(base) {
 
-//plugin management
-require('./bonobo').init(path.join(server.rootDir, 'plugins'), function(bonobo) {
-    
-  server.bonobo = bonobo;
-
-  server.bonobo.DoThemModels();
-
-  server.base.config(server.rootDir);
-
-  //by now all plugins have registered the models and views, are setup and ready for the bonobo to start :)
-  
-  //setup the mongodb and the errorhandlers
-  server.base.configure('development', function(){
-    server.base.use(express.errorHandler());
-    
-    // Bootstrap db connection
-    mongoose.connect(server.settings.mongodb.url+':'+server.settings.mongodb.port+'/'+server.settings.mongodb.db);
-
-  });
-
-  server.bonobo.RouteThemAll(function(err){
+  //plugin management
+  require('./bonobo').init(path.join(server.rootDir, 'plugins'), function(bonobo) {
       
-    //start the server.base server
-    if(server.base) {
-      http.createServer(server.base).listen(server.base.get('port'), function(){
-        console.log("Express server listening on port " + server.base.get('port'));
+    bonobo.DoThemModels(base, function() {
+
+      base.config(server.rootDir, function() {
+
+        //by now all plugins have registered the models and views, are setup and ready for the bonobo to start :)
+        
+        //setup the mongodb and the errorhandlers
+        base.configure('development', function(){
+          base.use(express.errorHandler());
+          
+          // Bootstrap db connection
+          mongoose.connect(server.settings.mongodb.url+':'+server.settings.mongodb.port+'/'+server.settings.mongodb.db);
+
+          bonobo.RouteThemAll(base, function(err){
+              
+            //start the base server
+            if(base) {
+              http.createServer(base).listen(base.get('port'), function(){
+                console.log("Express server listening on port " + base.get('port'));
+              });
+            }
+          });
+        });          
       });
-    }
-    if(server.admin) {
-      http.createServer(server.base).listen(server.base.get('port'), function(){
-        console.log("Express server listening on port " + server.base.get('port'));
-      });
-    }
+    });
   });
 });
 

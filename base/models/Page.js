@@ -6,26 +6,41 @@ var mongoose = require('mongoose')
   , utils = require(path.join(__dirname, '../utils'));
 
 var schema = new Schema({
-    title: {type: String, trim: true}
-  , slug: String
-  , body: String
-  , footer: String
-  , logo: { src: String, title: String, alt: String }
-  , meta: {}
-  , createdAt: {type : Date, default : Date.now}
-  , menu: String
+  values: {
+      title: {type: String, trim: true}
+    , slug: String
+    , body: String
+    , footer: String
+    , published: Boolean
+    , logo: { src: String, title: String, alt: String }
+    , meta: {}
+    , createdAt: {type : Date, default : Date.now}
+    , menu: String
+  }
 });
 
-schema.path('title').validate(function (title) {
+schema.path('values.title').validate(function (title) {
   return title.length > 0
 }, 'page title cannot be blank');
 
 
 schema.pre('save', function(next) {
-  this.slug = utils.slugify(this.title);
+  this.values.slug = utils.slugify(this.values.title);
   
   next();
 });
 
+
+schema.pre('save', function(next) {
+  this.values.slug = utils.slugify(this.values.title);
+  
+  if(this.values.published === "on"){
+    this.values.published = true;
+  }else{
+    this.values.published = false;
+  }
+  
+  next();
+});
 
 mongoose.model('Page', schema);

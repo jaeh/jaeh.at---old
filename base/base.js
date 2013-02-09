@@ -6,23 +6,23 @@ var express = require('express')
   , path = require('path')
   , passport = require('passport')
   , moment = require('moment')
-  , stylus = require('stylus');
+  , stylus = require('stylus')
+  , utils = require(path.join(__dirname, "utils"))
+  , bonobo = require(path.join(__dirname, '..', 'bonobo'));
+  
 
 var base = module.exports = express();
 
-base.init = function() {
+base.rootDir = __dirname;
 
-  base.rootDir = __dirname;
-  
-  base.modelPaths = [];
-  
-  return base;
+base.modelPaths = [];
+
+base.init = function(cb) {  
+  cb(base);
 }
 
 
-base.config = function(rootDir) {
-  
-  //~ hbs.registerPartial('partial', fs.readFileSync(path.join(base.basedir, '/views/partial.hbs'), 'utf8'));
+base.config = function(rootDir, cb) {
   
   base.configure(function() {
     
@@ -33,16 +33,12 @@ base.config = function(rootDir) {
     //~ ejs.open = '{{';
     //~ ejs.close = '}}';
 
-    ejs.filters.momentize = function(date){
-      //~ return moment(date).fromNow();
-      return date;
-    }
+    require(path.join(__dirname, 'ejsfilters'))();
     
     base.set('view engine','ejs');  // use the EJS node module
       
     base.use(express.favicon(path.join(rootDir, '/public/images/favicon.ico')));
     
-//    base.use(require('stylus').middleware(path.join(rootDir, 'public')));
     function compile(str, path) {
       return stylus(str)
         .set('filename', path)
@@ -51,7 +47,7 @@ base.config = function(rootDir) {
     }
 
     base.use(stylus.middleware({
-        src: path.join(__dirname, 'public')
+        src: rootDir + '/public/'
       , compile: compile
     }));
     
@@ -75,32 +71,66 @@ base.config = function(rootDir) {
     //custom middleware to get all base.locals that we need...
     base.use(function(req,res,next) {
       
-      base.locals.utils = require(path.join(__dirname, "utils"));
+      base.locals.utils = utils;
     
-      //~ XXX todo: change this to update every few minutes
-     
-        
       mongoose.model("PageData")
-      .findOne({"values.appname": "base"})
-      .exec(function(err, pageData) {
-        if(pageData && pageData.values) {
-          base.locals.pageData = pageData.values;
+      .findOne({"values.appname": "base"}, function(err, pageData) {
         
-        }else{
+        if(!pageData) {
+        
           if(req.path.indexOf('setup') === -1) {
             res.redirect('/setup');
             return;
           }
+        
+        }
+        if(pageData && pageData.values) {
+          base.locals.pageData = pageData.values;
         }
         
         next();
       });      
     });
 
+    //custom middleware to get all base.locals that we need...
+    base.use(function(req,res,next) {
+     
+      mongoose.model("MenuItem").find({}, function(err, menuItems) {
+        
+        console.log('menuITems in base middleware=');
+        console.log(menuItems);
+        
+        var mIs = {
+            header: []
+          , footer: []
+        }
+        
+        utils.each(menuItems, function(mI){
+          console.log('saving menuitem to ');
+          console.log(mI.value);
+          //~ mIs[mI.value.values.menu].push(mI.value.values);
+        });
+        
+        if(utils.count(mIs) > 0 ) {
+          base.locals.menuItems = mIs;
+        }
+        next();
+      });      
+    });
+    
+    
+    //add custom plugin middleware from bonobo if any is there.
+    utils.each(bonobo.middleWare, function(mW) {
+      if(typeof mW === 'function' ) {
+        base.use(mW);
+      }
+    });
     //route page calls last
     base.use(base.router);
 
   });
+  
+  cb();
 }
 
 base.GetPageData = function(cb) {

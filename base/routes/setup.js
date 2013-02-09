@@ -1,10 +1,11 @@
-"use strict";
+'use strict';
 
 var mongoose = require('mongoose')
   , slugify = require('../utils').slugify
   , base = require('../base')
   , bonobo = require('../../bonobo')
-  , path = require('path');
+  , path = require('path')
+  , utils = require(path.join('..', 'utils'));
 
 var routes = module.exports = {
     gets: {},
@@ -12,86 +13,150 @@ var routes = module.exports = {
 };
 
 routes.gets.setup = function(req, res) {
-  res.render('setup', {showform: "true"});
+  var settings = require(path.join(__dirname, '..', 'settings'));
+  
+  res.render('setup', {showform: 'true', settings: settings});
 }
 
 routes.posts.setup = function(req, res){
   
-  mongoose.model('PageData').findOne({'values.appname': "base"}).exec(function(err, pageData) {
-    //~ console.log('pageData in setup =');
-    //~ console.log(pageData);
-    //~ 
-    if(!pageData) {
-      createPages(function(err, createPageReturn) {
-        
-        createPageData(function(err, createPageDataInfo) {
-          if(err) throw err;
+  var errs = []
+    , msgs = [];
+  
+  var reqBody = utils.requestBodyToJSON(req.body);
+  
+  createPageData(reqBody.pageData, function(err, msg) {
+    if(err) utils.each(err,function(err){if(err) errs.push(err)});
+    if(msg) utils.each(msg,function(msg){if(msg) msgs.push(msg)});
+      
+    createPages(reqBody.pages, function(err, msg) {      
+      
+      if(err) utils.each(err,function(err){if (err) errs.push(err)});
+      if(msg) utils.each(msg,function(msg){if (msg) msgs.push(msg)});
+            
+
+      createMenuItems(reqBody.mIs, function(err, msg) {
+        if(err) utils.each(err,function(err){if (err) errs.push(err)});
+        if(msg) utils.each(msg,function(msg){if (msg) msgs.push(msg)});
+              
+        bonobo.DoTheSetup(function(err,msg) {
+          if(err) utils.each(err,function(err){if(err) errs.push(err)});
+          if(msg) utils.each(msg,function(msg){if (msg) msgs.push(msg)});
           
-          bonobo.DoTheSetup(function(err, messages) {
-            //~ console.log('bonobo.dothesetup called');
-            res.render('setup', {messages: messages, completed: true});
-          });
+          res.render('setup', {showform: 'false', errs: errs, msgs: msgs});
         });
       });
-    }else{
-      res.render('setup', {completed: true});
-    }
-  });
-}
-
-function createPageData(cb) {
-  //page data does not exist, inserting it
-   
-  var PageData = mongoose.model("PageData");
-  
-  var pageData = new PageData();
-  
-  base.locals.pageData = pageData.values = require(path.join(__dirname, "..", "settings")).pageData;
-  
-  pageData.save(function(err) {
-    var ret = err;
-    
-    if(!err) ret = "pagedata setup was a success";
-
-    cb(err, ret);
-  });
-  
-}
-
-function createPages(cb) {
-  
-  var Page = mongoose.model("Page");
-  
-  var page = new Page();
-  page.title = '4oh4';
-  page.slug = '4oh4';
-  page.body = '4oh4 page body';
-  page.footer = '4oh4 page footer';
-  page.logo = {
-    src: '/images/pagelogos/4oh4.png',
-    title: '4oh4 logo title',
-    alt: '4oh logo alt'
-  };
-
-
-  var page2 = new Page();
-  page2.title = 'home';
-  page2.slug = 'home';
-  page2.body = 'home page body';
-  page2.footer = 'home page footer';
-  page2.logo = {
-    src: '/images/pagelogos/home.png',
-    title: 'page logo home title',
-    alt: 'page logo home alt'
-  };
-  
-  page.save(function(err) {
-    
-    page2.save(function(err) {
-      
-      console.log('saved pages');
-  
-      cb(null, "pages saved");
     });
   });
 }
+
+function createPageData(pD, cb) {
+  //page data does not exist, inserting it
+   
+  var PageData = mongoose.model('PageData');
+  
+  PageData.findOne({'values.appname': pD.appname}, function(err, pageData) {
+    pageData = pageData || new PageData();
+    
+    pageData.values = pD;
+    
+    pageData.save(function(err) {
+      var msg = [false];
+      
+      if(!err) {      
+        msg = [{message: 'pageData save successful', css: 'win'}];
+      }
+      err = [{message: err, css: 'err failure'}];
+      
+      cb(err, msg);
+    });
+  });
+}
+
+function createPages(pages, cb) {
+  
+  var Page = mongoose.model('Page');
+
+  var msgs = [];
+  var errs = [];
+  
+  var i = 0;
+  
+  utils.each(pages, function(pageValues){    
+
+    
+    Page.findOne({'values.slug': utils.slugify(pageValues.value.title)},function(err, page) {
+      page = page || new Page();
+      
+      page.values = pageValues.value;
+    
+      page.save(function(err) {
+        var msg = [false];
+        
+        if(!err) {      
+          msgs.push({message: 'page '+page.values.title+' save successful', css: 'win'});
+        } else {
+          errs.push({message: 'page '+page.values.title+' save errored: '+err, css: 'err failure'});
+        }
+        
+        
+        i++;
+        
+        if(i >= utils.count(pages) ) {
+          if(errs.length == 0) {
+            msgs.push({message: 'page setup successful, added '+i+' pages', css: 'win'});
+          }else{
+            msgs.push({message: 'page setup completed with errors', css: 'fail'});
+          }
+          
+          cb(errs,msgs);
+        }
+      });
+    });
+  });
+}
+
+function createMenuItems(mIs, cb) {
+  
+  var MenuItem = mongoose.model('MenuItem');
+  
+  
+  var msgs = [];
+  var errs = [];
+  
+  var i = 0;
+  
+  utils.each(mIs, function(mIValues) {
+    
+    MenuItem.findOne({'values.slug': utils.slugify(mIValues.value.title)}, function(err, menuItem){
+      menuItem = menuItem || new MenuItem();
+      
+      menuItem.values = mIValues.value;
+      
+      
+      menuItem.save(function(err, msg) {
+        
+        var msg = [false];
+        
+        if(!err) {      
+          msgs.push({message: 'menuItem '+menuItem.values.text+' save successful', css: 'win'});
+        } else {
+          errs.push({message: 'menuItem '+menuItem.values.text+' save errored: '+err, css: 'err failure'});
+        }
+        
+        
+        i++;    
+                
+        if(i >= utils.count(mIs) ) {
+          if(errs.length == 0) {
+            msgs.push({message: 'menuItem setup successful, added '+i+' menuItems', css: 'win'});
+          }else{
+            errs.push({message: 'menuItem '+menuItem.values.text+' setup completed with errors', css: 'fail'});
+          }
+          cb(errs, msgs);
+        }
+      });
+    });
+  });
+}
+

@@ -1,12 +1,12 @@
-/* 
-Author: Jascha Ehrenreich
-Author URI: http://jaeh.at/
-Version: 1.0
-*/
-input.compact {
-  width: 30px;
-}
-.desc {
-  font-size: 0.9em;
-  font-style: italic;
-}
+body{width:950px}
+input.compact{width:30px}
+.desc{font-size:.9em;font-style:italic}
+form{margin:20px 0;}
+form header{margin:10px 0 0;font-size:1.2em;text-decoration:underline}
+table{border-collapse:collapse;border-spacing:0;text-align:left;width:100%;}
+table th,table td{padding:2px 10px 2px 2px;vertical-align:top;}
+table th img,table td img{float:left}
+table tr{border-width:0 0 1px 0;border-style:dotted}
+table th th,table td td{padding:2px 10px 2px 2px}
+table table,table tr tr:last-child,table tr tr:last-child{border:0 none}
+table input,table textarea{background-color:#aaa;color:#000;border-radius:4px;padding:0 5px}

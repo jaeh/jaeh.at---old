@@ -6,6 +6,10 @@
   
 %>   
 
+<% ut.each(page.values, function(val) {%>
+  <%= val.key %>: <%= val.value %>
+<%});%>
+
 <% if( p.title ){ %>
   <header>
     <h1><%= p.title %></h1>

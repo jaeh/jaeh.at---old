@@ -10,14 +10,20 @@ var mongoose  = require('mongoose')
 var setup = module.exports = {};
 
 setup.init = function(bonobo, cb) {
+  
+  var errs = []
+    , msgs = [];
+  
   bonobo.getPluginSettings(settings, function(err, setting) {
-    //~ console.log('setting=');
-    //~ console.log(setting);
+    
+    if(err) errs.push(err);
     
     if( !setting.opts.setupDone || !setting.opts.setupDone.value 
         || utils.getVersionNumber(settings.version.value) > utils.getVersionNumber(setting.opts.version.value)) {
       
       setupPlugin(function(err, msg) {
+        if(err) errs.push(err);
+        if(msg) msgs.push(msg);
         
         setting.opts.setupDone.value = true;
         
@@ -32,25 +38,10 @@ setup.init = function(bonobo, cb) {
 }
 
 
-function updatePageData(cb) {
-  
-  var pageData = base.locals.pageData;
-  
-  var meta = pageData.meta;
-  
-  meta.mIs.header.push({ url: "/admin", text: "admin", order: 9});
-  
-  if(pageData) {
-    pageData.update({meta: meta}, function(err, res) {
-      
-      cb(err);
-    });
-  }
-}
-
-
 function setupPlugin(cb) {
-  updatePageData(function(err,msg) {
-    cb(err,"");
-  });
+  var errs = []
+    , msgs = [];
+    
+  
+  cb(null, null);
 }

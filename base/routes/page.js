@@ -22,7 +22,7 @@ exports.page = function(req, res){
   
   //looking for the requested page
   Page
-  .findOne({slug: pageSlug})
+  .findOne({"values.slug": pageSlug})
   .exec(function(err, page) {
     
     if(!base.locals.pageData){      
@@ -32,14 +32,14 @@ exports.page = function(req, res){
     }
     
     if(!page){
-      console.log('page not found in db, redirecting to 4oh4');
+      console.log('page'+pageSlug+' not found in db, redirecting to 4oh4');
       res.redirect("4oh4");
       return;
     }
     
     console.log('loading '+pageSlug+ ", found page in db");
     
-    res.render('page', {page: page});
+    res.render('page', {page: page.values});
     return;
   });	
 }
