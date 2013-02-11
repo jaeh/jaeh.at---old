@@ -128,11 +128,10 @@ function createMenuItems(mIs, cb) {
   
   utils.each(mIs, function(mIValues) {
     
-    MenuItem.findOne({'values.slug': utils.slugify(mIValues.value.title)}, function(err, menuItem){
+    MenuItem.findOne({'values.slug': utils.slugify(mIValues.value.text)}, function(err, menuItem){
       menuItem = menuItem || new MenuItem();
       
       menuItem.values = mIValues.value;
-      
       
       menuItem.save(function(err, msg) {
         

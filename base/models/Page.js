@@ -34,7 +34,7 @@ schema.pre('save', function(next) {
 schema.pre('save', function(next) {
   this.values.slug = utils.slugify(this.values.title);
   
-  if(this.values.published === "on"){
+  if(this.values.published === "on" || this.values.published === true){
     this.values.published = true;
   }else{
     this.values.published = false;

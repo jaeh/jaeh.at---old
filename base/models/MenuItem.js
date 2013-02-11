@@ -33,16 +33,12 @@ schema.pre('save', function(next) {
   
   this.values.slug = utils.slugify(this.values.text);
   
-  console.log('this.values.published before = '+this.values.published);
-  
-  if(this.values.published === "on"){
+  if(this.values.published === "on" || this.values.published === true){
     this.values.published = true;
   }else{
     this.values.published = false;
   }
-  
-  
-  console.log('this.values.published after = '+this.values.published);
+
   
   next();
 });

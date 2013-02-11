@@ -14,12 +14,12 @@ var options = module.exports = {
 
 
 options.gets.options = function(req, res) {
-  console.log('finding option with plugin: '+auth.pluginName);
+  //~ console.log('finding option with plugin: '+auth.pluginName);
   
   Option.findOne({plugin: auth.pluginName}).exec(function(err, options) {
     var messages = [];
     
-    console.log('options.get err = '+err+' options =');
+    //~ console.log('options.get err = '+err+' options =');
     console.log(options);
     if(err) {
       messages.push({class:"red", text: err});
@@ -41,15 +41,15 @@ options.gets.options = function(req, res) {
 
 
 options.posts.options = function(req, res) {
-  console.log('req.body =');
-  console.log(req.body);
+  //~ console.log('req.body =');
+  //~ console.log(req.body);
     
   Option.findOne({plugin: 'auth'}).exec(function(err, pluginOptions) {
     
     var options = pluginOptions || new Option();
     
-    console.log('options =');
-    console.log(options);
+    //~ console.log('options =');
+    //~ console.log(options);
     
     var opt = [];
     for( var i = 0; i < auth.options.length; i++) {
@@ -78,8 +78,8 @@ options.posts.options = function(req, res) {
 
     Option.update({plugin: auth.pluginName}, {$set: {opt: options.opt}}, {upsert: true}, function(err, ret) {
        
-      console.log('options after update: ');
-      console.log();
+      //~ console.log('options after update: ');
+      //~ console.log();
       var messages = [];
       
       if(err) messages.push({class:'red', text: err});

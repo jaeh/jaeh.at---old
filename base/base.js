@@ -95,20 +95,19 @@ base.config = function(rootDir, cb) {
     //custom middleware to get all base.locals that we need...
     base.use(function(req,res,next) {
      
-      mongoose.model("MenuItem").find({}, function(err, menuItems) {
+      mongoose.model("MenuItem").find({"values.published": true}).sort({"values.pos": "asc"}).exec(function(err, menuItems) {
         
         console.log('menuITems in base middleware=');
         console.log(menuItems);
-        
-        var mIs = {
-            header: []
-          , footer: []
-        }
+        //~ 
+        var mIs = {}
         
         utils.each(menuItems, function(mI){
-          console.log('saving menuitem to ');
-          console.log(mI.value);
-          //~ mIs[mI.value.values.menu].push(mI.value.values);
+          //~ console.log('saving menuitem to ');
+          //~ console.log(mI.value);
+          if(!mIs[mI.value.values.menu]) mIs[mI.value.values.menu] = [];
+          
+          mIs[mI.value.values.menu].push(mI.value.values);
         });
         
         if(utils.count(mIs) > 0 ) {

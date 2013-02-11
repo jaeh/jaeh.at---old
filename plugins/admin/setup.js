@@ -9,39 +9,12 @@ var mongoose  = require('mongoose')
 
 var setup = module.exports = {};
 
-setup.init = function(bonobo, cb) {
-  
-  var errs = []
-    , msgs = [];
-  
-  bonobo.getPluginSettings(settings, function(err, setting) {
-    
-    if(err) errs.push(err);
-    
-    if( !setting.opts.setupDone || !setting.opts.setupDone.value 
-        || utils.getVersionNumber(settings.version.value) > utils.getVersionNumber(setting.opts.version.value)) {
-      
-      setupPlugin(function(err, msg) {
-        if(err) errs.push(err);
-        if(msg) msgs.push(msg);
-        
-        setting.opts.setupDone.value = true;
-        
-        bonobo.updateOrSavePluginSettings(setting, function(err){
-          cb(err, settings.name.value+" setup has completed");
-        });
-      });          
-    }else{
-      cb(null, settings.name.value+" setup has been completed already, did nothing");
-    }
-  });
+setup.init = function(cb) {
+ cb(settings);
 }
 
 
-function setupPlugin(cb) {
-  var errs = []
-    , msgs = [];
-    
+setup.setup = function(cb) {
   
   cb(null, null);
 }

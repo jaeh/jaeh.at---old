@@ -80,47 +80,151 @@ bonobo.DoTheSetup = function(cb) {
     }
   }
   
-  
   utils.each(setups, function(setUp) {
     var setup = setUp.value;
     
     if(setup && setup.init && typeof setup.init === 'function') {
      
-      setup.init(bonobo, function(err, msg) {
+      setup.init(function(settings) {
         
-        if(err) utils.each(errs,function(err){errs.push(err)});
-        if(msg) utils.each(msgs,function(msg){msgs.push(msg)});
-        
-        i++;
-        
-        console.log(i+' i >= setups.length '+setups.length);
-        
-        if(i >= utils.count(setups) ) {
-          //this returns to the base setup route in ./base/routes/setup and shows the setup view
-          cb(errs, msgs);
-        }
+    
+        bonobo.getPluginSettings(settings, function(err, setting) {
+          
+          if(err) errs.push({message: err, css: 'fail'});
+          
+          if(!setting.opts.setupDone || !setting.opts.setupDone.value ) {
+            if(setup.setup && typeof setup.setup === "function" ){
+              setup.setup(function(errs, msgs) {
+                
+                setting.opts.setupDone.value = true;
+                
+                bonobo.updateOrSavePluginSettings(setting, function(errs, msgs){
+                  
+                  if(!err) {
+                    msgs.push({message: settings.name.value +' setup successful', css: 'win'});
+                  }else{
+                    errs.push({message: settings.name.value + ' setup completed with errors', css: 'fail'});
+                  }
+              
+                  i++;
+                  if(i >= utils.count(setups)) cb(errs, msgs);
+                });
+              });
+            }else{
+              errs.push({message: settings.name.value +" setup had no setup function.", css: 'fail'});
+              
+              i++;
+              if(i >= utils.count(setups)) cb(errs, msgs);
+            }
+          }else{
+            msgs.push({message: settings.name.value +" setup has been completed already, did nothing", css: 'meh'});
+            
+            i++;
+            if(i >= utils.count(setups)) cb(errs, msgs);
+          }
+        });
       });
     }
   });
 }
 
 
-bonobo.DoTheMiddleWare = function(base, req,res, next) {
-  var i = 0;
+
+
+
+bonobo.addPluginSettings = function(pluginSettings, cb) {
   
-  utils.each(bonobo.middleWare, function(mW) {
-    if(typeof mW === 'function') {
-      base.use(mW);
-    }
+  if(!pluginSettings || !pluginSettings.name.value){
+    cb("bonobo.addPluginSettings needs a pluginname and pluginsettings to work");
+    return;
+  }else{
+    console.log('bonobo startint settings setup for '+pluginSettings.name.value);
+  }
+  
+  var Setting = mongoose.model("Setting");
+  
+  var setting = new Setting();
+  
+  setting.name = pluginSettings.name.value;
+  setting.opts = pluginSettings;
+  
+  setting.save(function(err) {
+    bonobo.plugins[setting.name].settings = setting;
+    //~ console.log('settings setup for '+pluginSettings.name.value+' completed with error:'+err);
+    cb(err, setting);
+  });
+  
+}
+
+bonobo.getPluginSettings = function(pluginSettings, cb) {
+  
+  if(!pluginSettings || utils.count(pluginSettings) <= 0 ) {
+    var err = {message: "settings for the plugin could not be found", css: "fail" };
     
-    i++;
+    cb(err, null);
+    return;
+  }
+  
+  var settings = bonobo.plugins[pluginSettings.name.value].settings;
+ 
+  if(settings && typeof settings === "object") {
+    cb(null, settings);
+    return;
+  }
+  
+  var Setting = mongoose.model("Setting");
+  
+  Setting.findOne({slug: utils.slugify(pluginSettings.name.value)}, function(err, setting) {
     
-    console.log('i = '+i+' utils.count(bonobo.middleWare) = '+utils.count(bonobo.middleWare));
-    if(i >= utils.count(bonobo.middleWare)) {
-      next();
+    if(!setting) {
+      bonobo.addPluginSettings(pluginSettings, cb);
+    }else{
+      cb(err, setting);
     }
   });
 }
+
+bonobo.updateOrSavePluginSettings = function(pluginSettings, cb) {
+  if(!pluginSettings || typeof pluginSettings !== "object") {
+    console.log('invalid settings object passed to bonobo.updateOrSavePluginSettings');
+  }
+  
+  var errs = []
+    , msgs = [];
+    
+  mongoose.model("Setting").findOne({slug: utils.slugify(pluginSettings.name.value)}, function(err, setting) {
+    
+    if(err) {
+      errs.push({message: err, css: 'fail'});
+    }
+    
+    if(!setting) {
+      pluginSettings.save(function(err,msg) {
+        
+        if(errs.length == 0) {
+          msgs.push({message: 'pluginSettings for '+pluginSettings.name.value+' saved successful', css: 'win'});
+        }else{
+          errs.push({message: 'pluginSettings for '+pluginSettings.name.value+' saved with errors', css: 'fail'});
+        }
+        
+        cb(errs, msgs);
+      });
+    }else{
+      setting.update({$set: {opts: pluginSettings.opts.value}},function(err) {
+         if(errs.length == 0) {
+          msgs.push({message: 'pluginSettings for '+pluginSettings.name.value+' updated successful', css: 'win'});
+        }else{
+          errs.push({message: 'pluginSettings for '+pluginSettings.name.value+' updated with errors', css: 'fail'});
+        }
+        
+        cb(errs, msgs);
+      });
+    }
+    
+  });
+  
+}
+
 
 bonobo.DoThemModels = function(base, cb) {
   
@@ -267,87 +371,19 @@ bonobo.RouteThemAll = function(base, cb) {
 }
 
 
-bonobo.addPluginSettings = function(pluginSettings, cb) {
+bonobo.DoTheMiddleWare = function(base, req,res, next) {
+  var i = 0;
   
-  if(!pluginSettings || !pluginSettings.name.value){
-    cb("bonobo.addPluginSettings needs a pluginname and pluginsettings to work");
-    return;
-  }else{
-    console.log('bonobo startint settings setup for '+pluginSettings.name.value);
-  }
-  
-  var Setting = mongoose.model("Setting");
-  
-  var setting = new Setting();
-  
-  setting.name = pluginSettings.name.value;
-  setting.opts = pluginSettings;
-  
-  setting.save(function(err) {
-    bonobo.plugins[setting.name].settings = setting;
-    //~ console.log('settings setup for '+pluginSettings.name.value+' completed with error:'+err);
-    cb(err, setting);
-  });
-  
-}
-
-bonobo.getPluginSettings = function(pluginSettings, cb) {
-  var settings = bonobo.plugins[pluginSettings.name.value].settings;
- 
-  if(settings && typeof settings === "object") {
-    cb(null, settings);
-    return;
-  }
-  
-  var Setting = mongoose.model("Setting");
-  
-  Setting.findOne({slug: utils.slugify(pluginSettings.name.value)}, function(err, setting) {
-    
-    if(!setting) {
-      bonobo.addPluginSettings(pluginSettings, cb);
-    }else{
-      cb(err, setting);
-    }
-  });
-}
-
-bonobo.updateOrSavePluginSettings = function(pluginSettings, cb) {
-  if(!pluginSettings || typeof pluginSettings !== "object") {
-    console.log('invalid settings object passed to bonobo.updateOrSavePluginSettings');
-  }
-  
-  var errs = []
-    , msgs = [];
-    
-  mongoose.model("Setting").findOne({slug: utils.slugify(pluginSettings.name.value)}, function(err, setting) {
-    
-    if(err) {
-      errs.push({message: err, css: 'fail'});
+  utils.each(bonobo.middleWare, function(mW) {
+    if(typeof mW === 'function') {
+      base.use(mW);
     }
     
-    if(!setting) {
-      pluginSettings.save(function(err,msg) {
-        
-        if(errs.length == 0) {
-          msgs.push({message: 'pluginSettings for '+pluginSettings.name.value+' saved successful', css: 'win'});
-        }else{
-          errs.push({message: 'pluginSettings for '+pluginSettings.name.value+' saved with errors', css: 'fail'});
-        }
-        
-        cb(errs, msgs);
-      });
-    }else{
-      setting.update({$set: {opts: pluginSettings.opts.value}},function(err) {
-         if(errs.length == 0) {
-          msgs.push({message: 'pluginSettings for '+pluginSettings.name.value+' updated successful', css: 'win'});
-        }else{
-          errs.push({message: 'pluginSettings for '+pluginSettings.name.value+' updated with errors', css: 'fail'});
-        }
-        
-        cb(errs, msgs);
-      });
-    }
+    i++;
     
+    //~ console.log('i = '+i+' utils.count(bonobo.middleWare) = '+utils.count(bonobo.middleWare));
+    if(i >= utils.count(bonobo.middleWare)) {
+      next();
+    }
   });
-  
 }

@@ -85,8 +85,8 @@ auth.setupRoutes = function(bonobo, cb) {
       url: '/user/:user'
     , route: function(req,res){
       
-        console.log('req.params = ');
-        console.log(req.params);
+        //~ console.log('req.params = ');
+        //~ console.log(req.params);
         res.render('profile/user', {user: {name: "test", logo: 'logo'} });
       }
   });
@@ -150,15 +150,3 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(user, done) {
   done(null,user);
 });
-
-
-auth.settings = {
-  showlinks: {
-      value: {
-        registration: false,
-        login: true
-      }
-    , type: 'list'
-    , desc: 'show menuitems in the header menu'
-  }
-};

@@ -88,8 +88,8 @@ routes.posts.registrationConfirm = function(req, res) {
     errors: {}
   }
   
-  console.log('req.body =');
-  console.log(req.body);
+  //~ console.log('req.body =');
+  //~ console.log(req.body);
   
   if(!req.body || !req.body.email) {    
     if(!req.body.email && !req.params.email){
@@ -104,10 +104,10 @@ routes.posts.registrationConfirm = function(req, res) {
   
   
   if(!returner.error) {
-    console.log("got a code and an email");
+    //~ console.log("got a code and an email");
     UserRegistration.findOne({email: req.body.email, random: req.body.random}, "name email password", function(err, userReg) {
-      console.log('userReg in registrationconfirm found with err:'+err+" queryparams: email="+req.body.email+"  random: "+req.body.random);
-      console.log(userReg);
+      //~ console.log('userReg in registrationconfirm found with err:'+err+" queryparams: email="+req.body.email+"  random: "+req.body.random);
+      //~ console.log(userReg);
       
       if(userReg) {
         var user = new User();
@@ -120,7 +120,7 @@ routes.posts.registrationConfirm = function(req, res) {
         user.save(function(err) {
           userReg.remove();
                     
-          console.log('user should be logged in now... redirecting to user account now');
+          //~ console.log('user should be logged in now... redirecting to user account now');
           
           //~ res.redirect('user/'+user.name);
           req.login(user, function(err) {

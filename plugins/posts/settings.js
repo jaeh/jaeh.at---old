@@ -1,3 +1,5 @@
+"use strict";
+
 var settings = module.exports = {
     name: {value: 'posts', type: "text", desc: "the name of this plugin"}
   , version: {value: '0.0.1', type: "version", desc: "the version number of this plugin"}
@@ -66,4 +68,21 @@ var settings = module.exports = {
       , type: "list"
       , desc: "handles the display of single posts"
     }
+  , mIs: {
+      type: "list"
+    , desc: "the menuitems for the different menus"
+    , value: {
+        home: {
+          type: "list"
+        , desc: "the home menu item"
+        , value: { 
+            url: {value: "/posts", type: "text", desc: "the target url"}
+          , text: {value: "posts", type: "text", desc: "the link text"}
+          , menu: {value: "header", type: "text", desc: "the menu this link should appear in"}
+          , pos: {value: 2, type: "number", desc: "the position priority this link has, 0 = highest, n = lowest"}
+          , published: {value: true, type: "bool", desc: "will this be shown in menus?"}
+        }
+      }
+    }
+  }
 };

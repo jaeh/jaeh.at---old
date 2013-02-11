@@ -14,7 +14,7 @@ server.settings = {
     mongodb: {
         url: '127.0.0.1'
       , port: "27017"
-      , db: "fnord2"
+      , db: "fnord"
     }
   , port: '3000'
   , 
