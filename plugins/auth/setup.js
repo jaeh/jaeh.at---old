@@ -9,6 +9,7 @@ var mongoose  = require('mongoose')
 var setup = module.exports;
 
 setup.init = function(cb) {
+  
   cb(settings);
 }
 

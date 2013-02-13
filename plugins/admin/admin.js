@@ -28,7 +28,7 @@ admin.setupRoutes = function(bonobo) {
   admin.routes = require(path.join(admin.rootDir, '/routes/admin'));
   
   admin.reqs.gets.push({url: '/admin', route: admin.routes.admin});
-  admin.reqs.gets.push({url: '/admin/settings', route: admin.routes.options});
+  admin.reqs.gets.push({url: '/admin/settings', route: admin.routes.settings});
   admin.reqs.gets.push({url: '/admin/settings/:pluginSlug', route: admin.routes.pluginOptions});
 }
 

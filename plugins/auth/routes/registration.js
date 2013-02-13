@@ -1,8 +1,6 @@
 "use strict";
 
 var mongoose          = require('mongoose')
-  , UserRegistration  = mongoose.model('UserRegistration')
-  , User              = mongoose.model('User')
   , path              = require('path')
   , SHA512            = new(require('jshashes').SHA512)()
   , auth              = require(path.join(__dirname, '..', 'auth'));
@@ -40,6 +38,10 @@ routes.posts.registration = function(req, res) {
   console.log(req.body);
   
   if(req.body && !returner.error) {
+    
+    var UserRegistration  = mongoose.model('UserRegistration')
+      , User              = mongoose.model('User')
+      
     
     User.findOne({$or: [ { name: req.body.name }, { email: req.body.email } ]}, "email", function(err, user) {
       UserRegistration.findOne({$or: [ { name: req.body.name }, { email: req.body.email } ]}, "email", function(err, userReg) {

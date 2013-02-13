@@ -5,26 +5,31 @@ var mongoose = require('mongoose')
   , Schema = mongoose.Schema
 
 
+exports.init = function(cb) {
+  var schema = new Schema({
+    values: {
+        content: {type: String, trim: true}
+      , tag: String
+      , pageSlug: String
+      , published: Boolean
+    }
+  });
 
-var schema = new Schema({
-  values: {
-      content: {type: String, trim: true}
-    , tag: String
-    , pageSlug: String
-    , published: Boolean
-  }
-});
 
+  schema.pre('save', function(next) {
+    
+    if(this.values.published == "on") {
+      this.values.published = true;
+    }else{
+      this.values.published = false;
+    }
+    
+    next();
+  });
 
-schema.pre('save', function(next) {
+  mongoose.model('OpenGraphData', schema);
+
   
-  if(this.values.published == "on") {
-    this.values.published = true;
-  }else{
-    this.values.published = false;
-  }
-  
-  next();
-});
+  cb(null, {message: "OpenGraphData model setup success", css: "win"});
 
-mongoose.model('OpenGraphData', schema);
+}

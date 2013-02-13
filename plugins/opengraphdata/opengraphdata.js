@@ -14,7 +14,7 @@ var opengraphdata = module.exports = {
  
 opengraphdata.init = function(bonobo, cb) {
   
-  opengraphdata.modelPaths.push(path.join(opengraphdata.rootDir, 'models/'));
+  opengraphdata.modelPaths.push(path.join(opengraphdata.rootDir, 'models'));
   
   bonobo.middleWare.push(getGraphData);
   
@@ -27,7 +27,6 @@ function getGraphData( req,res, next) {
   
   console.log('request in opengraphdata: ');
   console.log(req);
-  
   
   cb();
 }

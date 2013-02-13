@@ -4,6 +4,7 @@ var settings = module.exports = {
     name: {value: 'posts', type: "text", desc: "the name of this plugin"}
   , version: {value: '0.0.1', type: "version", desc: "the version number of this plugin"}
   , setupDone: {value: false, type: "bool", desc: "has the setup for this plugin been completed?"}
+  , published: {value: true, type: "bool", desc: "is this plugin active?"}
   , pagination: {
         value: {
           show: { 
@@ -74,7 +75,7 @@ var settings = module.exports = {
     , value: {
         home: {
           type: "list"
-        , desc: "the home menu item"
+        , desc: "the posts menu item"
         , value: { 
             url: {value: "/posts", type: "text", desc: "the target url"}
           , text: {value: "posts", type: "text", desc: "the link text"}

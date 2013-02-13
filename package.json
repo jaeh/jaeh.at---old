@@ -16,5 +16,6 @@
     , "underscore"    : "latest"
     , "jshashes"      : "latest"
     , "moment"        : "latest"
+    , "async"         : "latest"
   }
 }

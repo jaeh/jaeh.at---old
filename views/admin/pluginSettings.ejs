@@ -11,7 +11,7 @@
 <form action="" method="post">
   <fieldset>
     <legend>Options:</legend>
-    <% ut.each(locals.settings.opts, function(setting) { %>
+    <% ut.each(locals.settings.values, function(setting) { %>
       <div class="fields">
         <label for="<%= setting.key %>"><%= setting.key %></label>
         <%-: setting|variableInputField %>

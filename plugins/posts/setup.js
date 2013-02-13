@@ -16,8 +16,6 @@ setup.init = function(cb) {
 }
 
 setup.setup = function(cb) {
-  //~ console.log('will setup posts plugin now.');
-
   
   var Post = mongoose.model('Post');
   
@@ -42,10 +40,6 @@ setup.setup = function(cb) {
     post.save(function(err) {
             
       if( doneI >= numOfPosts) {
-        //~ console.log('posts setup complete');
-        
-        var message = "posts setup complete";
-        //~ console.log('post save completed with err '+err+" and message: "+message);
         
         cb(null, "posts setup complete");
       }

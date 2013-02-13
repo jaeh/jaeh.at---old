@@ -18,7 +18,7 @@ var posts = module.exports = {
  
 posts.init = function(bonobo, cb) {
   
-  posts.modelPaths.push(path.join(posts.rootDir, 'models/'));
+  posts.modelPaths.push(path.join(posts.rootDir, 'models'));
   
   posts.admin = {};
   
@@ -37,9 +37,7 @@ posts.setupRoutes = function(bonobo, cb) {
     posts.reqs.gets.push({url: '/post/:slug', route: posts.routes.post});
     
     var adminExists = fs.existsSync(path.join(__dirname, "..", "admin"));
-    
-    //~ console.log('adminExists ='+adminExists);
-    
+        
     if(adminExists) {
       posts.reqs.gets.push({url: '/admin/posts', route: posts.admin.routes.postsadmin});
     }

@@ -6,7 +6,8 @@ var express = require('express')
   , path = require('path')  
   , SHA512            = new(require('jshashes').SHA512)()
   , passport = require('passport')
-  , LocalStrategy = require('passport-local').Strategy;
+  , LocalStrategy = require('passport-local').Strategy
+  , settings = require(path.join(__dirname, 'settings'));
 
 var auth = module.exports = {
     SHA512SALT: 'changeThis'
@@ -20,7 +21,7 @@ var auth = module.exports = {
  
 auth.init = function(bonobo, cb) {
   //~ 
-  auth.modelPaths.push(path.join(auth.rootDir, 'models/'));
+  auth.modelPaths.push(path.join(auth.rootDir, 'models'));
   
   //~ authConfig.configure(base);
 
@@ -31,68 +32,71 @@ auth.init = function(bonobo, cb) {
 
 auth.setupRoutes = function(bonobo, cb) {
   
-  auth.reqs.gets.push({
-    url:    '/login', 
-    route:  function(req,res) { res.render('auth/login');}
-  });
   
-  auth.reqs.gets.push({
-    url: '/logout', 
-    route: function(req, res){ 
-      req.logout();
-      res.redirect('/');
-    }
-  });
+  //~ bonobo.getPluginSettings(settings, function(err, setting) {
   
-  auth.reqs.posts.push({
-    url: '/login', 
-    route: function(req,res,next) {
+    //~ auth.settings = setting;
+  
+    auth.reqs.gets.push({
+      url:    '/login', 
+      route:  function(req,res) { res.render('auth/login');}
+    });
     
-      var loginObject = {
-          name: req.body.name
-        , password: req.body.password
+    auth.reqs.gets.push({
+      url: '/logout', 
+      route: function(req, res){ 
+        req.logout();
+        res.redirect('/');
       }
+    });
     
-      mongoose.model('User').findOne(loginObject, function(err, user) {
-     
-        if (!user) { return res.render('auth/login', {message: info}) }
-
-          
-        if(user.password == req.body.password) {
-            
-          var userForLogin = {
-            name: user.name,
-            email: user.email,
-            about: user.about
-          }
-          //~ passport.authenticate('local', function(err, user, info) {
-          req.login(userForLogin, function(err) {
-            //~ if (err) { return next(err); }
-                
-            if (err) { return next(err) }
-            
-            
-            res.redirect('/user/'+userForLogin.name);
-
-          });
-        }
-      });
-    }
-  });
-  
- 
-  auth.reqs.gets.push({
-      url: '/user/:user'
-    , route: function(req,res){
+    auth.reqs.posts.push({
+      url: '/login', 
+      route: function(req,res,next) {
       
-        //~ console.log('req.params = ');
-        //~ console.log(req.params);
-        res.render('profile/user', {user: {name: "test", logo: 'logo'} });
+        var loginObject = {
+            name: req.body.name
+          , password: req.body.password
+        }
+      
+        mongoose.model('User').findOne(loginObject, function(err, user) {
+       
+          if (!user) { return res.render('auth/login', {message: info}) }
+
+            
+          if(user.password == req.body.password) {
+              
+            var userForLogin = {
+              name: user.name,
+              email: user.email,
+              about: user.about
+            }
+            
+            req.login(userForLogin, function(err) {
+              if (err) return next(err);
+              
+              res.redirect('/user/'+userForLogin.name);
+
+            });
+          }
+        });
       }
-  });
-  
-  //setup routes of subplugins
-  auth.registration.setupRoutes(auth, cb);
+    });
+    
+   
+    auth.reqs.gets.push({
+        url: '/user/:user'
+      , route: function(req,res){
+        
+          //~ console.log('req.params = ');
+          //~ console.log(req.params);
+          res.render('profile/user', {user: {name: "test", logo: 'logo'} });
+        }
+    });
+    
+    //setup routes of subplugins
+    auth.registration.setupRoutes(auth, cb);
+  //~ });
 }
 
 
@@ -106,13 +110,6 @@ auth.ensureAuthenticated = function (req, res, next) {
   res.redirect('/login');
 }
 
-
-auth.options = [
-    { name: "description", value: "the auth plugin handles login and registration of users" }
-  , { name: "showLinks", value: true }
-  , { name: "needEmailConfirm", value: true }
-  , { name: "allowRegistration", value: true }
-];
 
 
 passport.use(new LocalStrategy(

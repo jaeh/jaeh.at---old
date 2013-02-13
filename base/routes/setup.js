@@ -1,10 +1,10 @@
 'use strict';
 
 var mongoose = require('mongoose')
-  , slugify = require('../utils').slugify
-  , base = require('../base')
-  , bonobo = require('../../bonobo')
   , path = require('path')
+  , slugify = require(path.join('..','utils')).slugify
+  , base = require(path.join('..', 'base'))
+  , bonobo = require(path.join('..', '..', 'bonobo', 'bonobo'))
   , utils = require(path.join('..', 'utils'));
 
 var routes = module.exports = {
@@ -34,12 +34,12 @@ routes.posts.setup = function(req, res){
       if(err) utils.each(err,function(err){if (err) errs.push(err)});
       if(msg) utils.each(msg,function(msg){if (msg) msgs.push(msg)});
             
-
-      createMenuItems(reqBody.mIs, function(err, msg) {
+      bonobo.DoTheSetup(function(err,msg) {
+        
         if(err) utils.each(err,function(err){if (err) errs.push(err)});
         if(msg) utils.each(msg,function(msg){if (msg) msgs.push(msg)});
               
-        bonobo.DoTheSetup(function(err,msg) {
+        createMenuItems(reqBody.mIs, function(err, msg) {
           if(err) utils.each(err,function(err){if(err) errs.push(err)});
           if(msg) utils.each(msg,function(msg){if (msg) msgs.push(msg)});
           
@@ -84,7 +84,6 @@ function createPages(pages, cb) {
   
   utils.each(pages, function(pageValues){    
 
-    
     Page.findOne({'values.slug': utils.slugify(pageValues.value.title)},function(err, page) {
       page = page || new Page();
       
@@ -117,10 +116,7 @@ function createPages(pages, cb) {
 }
 
 function createMenuItems(mIs, cb) {
-  
-  var MenuItem = mongoose.model('MenuItem');
-  
-  
+    
   var msgs = [];
   var errs = [];
   
@@ -128,33 +124,18 @@ function createMenuItems(mIs, cb) {
   
   utils.each(mIs, function(mIValues) {
     
-    MenuItem.findOne({'values.slug': utils.slugify(mIValues.value.text)}, function(err, menuItem){
-      menuItem = menuItem || new MenuItem();
-      
-      menuItem.values = mIValues.value;
-      
-      menuItem.save(function(err, msg) {
+    bonobo.AddMenuItem(mIValues.value, function(err, msg, menuItem) {        
         
-        var msg = [false];
-        
-        if(!err) {      
-          msgs.push({message: 'menuItem '+menuItem.values.text+' save successful', css: 'win'});
-        } else {
-          errs.push({message: 'menuItem '+menuItem.values.text+' save errored: '+err, css: 'err failure'});
+      i++;    
+              
+      if(i >= utils.count(mIs) ) {
+        if(errs.length == 0) {
+          msgs.push({message: 'menuItem setup successful, added '+i+' menuItems', css: 'win'});
+        }else{
+          errs.push({message: 'menuItem '+menuItem.values.text+' setup completed with errors', css: 'fail'});
         }
-        
-        
-        i++;    
-                
-        if(i >= utils.count(mIs) ) {
-          if(errs.length == 0) {
-            msgs.push({message: 'menuItem setup successful, added '+i+' menuItems', css: 'win'});
-          }else{
-            errs.push({message: 'menuItem '+menuItem.values.text+' setup completed with errors', css: 'fail'});
-          }
-          cb(errs, msgs);
-        }
-      });
+        cb(errs, msgs);
+      }
     });
   });
 }

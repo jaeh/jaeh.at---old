@@ -5,42 +5,48 @@ var mongoose = require('mongoose')
   , path = require('path')
   , utils = require(path.join(__dirname, '../utils'));
 
-var schema = new Schema({
-  values: {
-      title: {type: String, trim: true}
-    , slug: String
-    , body: String
-    , footer: String
-    , published: Boolean
-    , logo: { src: String, title: String, alt: String }
-    , meta: {}
-    , createdAt: {type : Date, default : Date.now}
-    , menu: String
-  }
-});
+exports.init = function(cb){
 
-schema.path('values.title').validate(function (title) {
-  return title.length > 0
-}, 'page title cannot be blank');
+  var schema = new Schema({
+    values: {
+        title: {type: String, trim: true}
+      , slug: String
+      , body: String
+      , footer: String
+      , published: Boolean
+      , logo: { src: String, title: String, alt: String }
+      , meta: {}
+      , createdAt: {type : Date, default : Date.now}
+      , menu: String
+    }
+  });
 
-
-schema.pre('save', function(next) {
-  this.values.slug = utils.slugify(this.values.title);
-  
-  next();
-});
+  schema.path('values.title').validate(function (title) {
+    return title.length > 0
+  }, 'page title cannot be blank');
 
 
-schema.pre('save', function(next) {
-  this.values.slug = utils.slugify(this.values.title);
-  
-  if(this.values.published === "on" || this.values.published === true){
-    this.values.published = true;
-  }else{
-    this.values.published = false;
-  }
-  
-  next();
-});
+  schema.pre('save', function(next) {
+    this.values.slug = utils.slugify(this.values.title);
+    
+    next();
+  });
 
-mongoose.model('Page', schema);
+
+  schema.pre('save', function(next) {
+    this.values.slug = utils.slugify(this.values.title);
+    
+    if(this.values.published === "on" || this.values.published === true){
+      this.values.published = true;
+    }else{
+      this.values.published = false;
+    }
+    
+    next();
+  });
+
+  mongoose.model('Page', schema);
+
+
+  cb(null, {message: "Page model setup success", css: "win"});
+}

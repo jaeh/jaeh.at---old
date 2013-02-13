@@ -2,31 +2,20 @@
   var ut = locals.utils;
 %>
 
-<% ut.each(locals.messages, function(eachObj){ %>
-  <div class="<%class%>"><%text%></div>
-<% } %>
+<% ut.each(locals.messages, function(msg){ %>
+  <div class="<%= msg.value.css %>"><%= msg.value.text %></div>
+<% }); %>
 
-<form action="" method="post">
-  <fieldset>
-    <legend>Options:</legend>
-    
-    <% ut.each(locals.options.opts%>
-      <div class="fields">
-        <label for="<%name%>"><%name%>:</label>
-        
-        <%#ifTypeEquals "string"%>
-          <textarea name="<%name%>" id="<%name%>" cols="50" rows="1"><%value%></textarea>
-        <%/ifTypeEquals%>
-
-        <%#ifTypeEquals "boolean"%>
-          <input type="checkbox" name="<%name%>" <%#if value%>checked="checked" <%/if%> id="<%name%>" />
-        <%/ifTypeEquals%>
-
-      </div>
-    <% } %>
-    
-    <div class="fields">
-      <input type="submit" value="save options" />
-    </div>
-  </fieldset>
-</form>
+<div class="info">
+  This page will hold overviews over various possible options,
+  
+  <h2>Plugins:</h2>
+  <ul class="plugins">
+    <% ut.each(locals.settings, function(set) { %>
+      <li>
+        <a href="/admin/settings/<%= ut.slugify(set.value.name.value) %>"><%= set.value.name.value %></a>
+      </li>
+    <% }); %>
+  </ul>
+  
+</div>

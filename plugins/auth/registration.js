@@ -10,9 +10,7 @@ var registration = module.exports;
 registration.init = function(bonobo) {
   
   registration.rootDir = __dirname; 
-  //~ 
   
-  //~ authConfig.configure(base);
   
   return registration;
 }
@@ -20,9 +18,6 @@ registration.init = function(bonobo) {
 
 
 registration.setupRoutes = function(auth, cb) {
-  
-  var User              = mongoose.model("User")
-    , UserRegistration  = mongoose.model("UserRegistration");
   
   var routes = require(path.join(registration.rootDir, 'routes/registration'));
   

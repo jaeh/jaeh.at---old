@@ -8,7 +8,7 @@ var express = require('express')
   , moment = require('moment')
   , stylus = require('stylus')
   , utils = require(path.join(__dirname, "utils"))
-  , bonobo = require(path.join(__dirname, '..', 'bonobo'));
+  , bonobo = require(path.join(__dirname, '..', 'bonobo', 'bonobo'));
   
 
 var base = module.exports = express();
@@ -17,18 +17,12 @@ base.rootDir = __dirname;
 
 base.modelPaths = [];
 
-base.init = function(cb) {  
-  cb(base);
-}
 
-
-base.config = function(rootDir, cb) {
+base.config = function(server, cb) {
   
   base.configure(function() {
     
-    base.set('port', process.env.PORT || 3000);
-    
-    base.set('views', path.join(rootDir, 'views')); // use appRootDir/views as template directory
+    base.set('views', path.join(server.rootDir, 'views')); // use appRootDir/views as template directory
     //~ 
     //~ ejs.open = '{{';
     //~ ejs.close = '}}';
@@ -37,21 +31,19 @@ base.config = function(rootDir, cb) {
     
     base.set('view engine','ejs');  // use the EJS node module
       
-    base.use(express.favicon(path.join(rootDir, '/public/images/favicon.ico')));
+    base.use(express.favicon(path.join(server.rootDir, '/public/images/favicon.ico')));
     
-    function compile(str, path) {
+    base.use(stylus.middleware({
+        src: server.rootDir + '/public/'
+      , compile: function(str, path) {
       return stylus(str)
         .set('filename', path)
         .set('compress', true);
         //.use(nib());
-    }
-
-    base.use(stylus.middleware({
-        src: rootDir + '/public/'
-      , compile: compile
+      }
     }));
     
-    base.use(express.static(path.join(rootDir, 'public')));
+    base.use(express.static(path.join(server.rootDir, 'public')));
     
     base.use(express.logger('dev'));
     
@@ -69,7 +61,7 @@ base.config = function(rootDir, cb) {
     
     
     //custom middleware to get all base.locals that we need...
-    base.use(function(req,res,next) {
+    base.use(function(req, res, next) {
       
       base.locals.utils = utils;
     
@@ -82,7 +74,6 @@ base.config = function(rootDir, cb) {
             res.redirect('/setup');
             return;
           }
-        
         }
         if(pageData && pageData.values) {
           base.locals.pageData = pageData.values;
@@ -97,14 +88,13 @@ base.config = function(rootDir, cb) {
      
       mongoose.model("MenuItem").find({"values.published": true}).sort({"values.pos": "asc"}).exec(function(err, menuItems) {
         
-        console.log('menuITems in base middleware=');
-        console.log(menuItems);
+        //~ console.log('menuItems in base middleware=');
+        //~ console.log(menuItems);
         //~ 
         var mIs = {}
         
         utils.each(menuItems, function(mI){
-          //~ console.log('saving menuitem to ');
-          //~ console.log(mI.value);
+          
           if(!mIs[mI.value.values.menu]) mIs[mI.value.values.menu] = [];
           
           mIs[mI.value.values.menu].push(mI.value.values);
@@ -129,7 +119,15 @@ base.config = function(rootDir, cb) {
 
   });
   
-  cb();
+  //setup the mongodb and the errorhandlers
+  base.configure('development', function(){
+    base.use(express.errorHandler());
+    
+    // Bootstrap db connection
+    mongoose.connect(server.settings.mongodb.url+':'+server.settings.mongodb.port+'/'+server.settings.mongodb.db);
+  });
+  
+  cb(null, [{message: "base configure success", css: "win"}]);
 }
 
 base.GetPageData = function(cb) {
