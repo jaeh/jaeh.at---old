@@ -3,16 +3,17 @@
 //bonobo does his thing. he goes through all the plugin directories and gets all models and all setup functions from there,
 //he also can execute them.
 
-var path      = require('path')
-  , fs        = require('fs')
-  , mongoose  = require('mongoose')
-  , utils = require(path.join(__dirname, '..', 'base', 'utils'))
-  , server = require(path.join(__dirname, '..', 'server'))
-  , setup = require(path.join(__dirname, 'setup'))
-  , middleware = require(path.join(__dirname, 'middleware'))
-  , models = require(path.join(__dirname, 'models'))
-  , routes = require(path.join(__dirname, 'routes'))
-  , pluginsettings = require(path.join(__dirname, 'pluginsettings'));
+var path            = require('path')
+  , fs              = require('fs')
+  , mongoose        = require('mongoose')
+  , utils           = require(path.join(__dirname, '..', 'base', 'utils'))
+  , server          = require(path.join(__dirname, '..', 'server'))
+  , setup           = require(path.join(__dirname, 'setup'))
+  , middleware      = require(path.join(__dirname, 'middleware'))
+  , models          = require(path.join(__dirname, 'models'))
+  , routes          = require(path.join(__dirname, 'routes'))
+  , pluginsettings  = require(path.join(__dirname, 'pluginsettings'))
+  , menuitems       = require(path.join(__dirname, 'menuitems'));
 
 
 var bonobo = module.exports = {
@@ -35,7 +36,7 @@ var bonobo = module.exports = {
     }
 };
 
-bonobo.init = function(rootDir, cb){
+bonobo.init = function(rootDir, cb) {
   
   
   bonobo.pluginDir = rootDir;
@@ -69,6 +70,7 @@ bonobo.init = function(rootDir, cb){
         routes.init(bonobo);
         middleware.init(bonobo);
         pluginsettings.init(bonobo);
+        menuitems.init(bonobo);
         
         
         cb(null, msgs);

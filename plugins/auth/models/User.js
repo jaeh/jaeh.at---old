@@ -41,12 +41,12 @@ exports.init = function(cb) {
   }, 'user name cannot be blank');
 
   schema.path('email').validate(function (email) {
-    //~ XXX check if this is an email (server.utils will hold this func.)
+    //~ TODO check if this is an email (server.utils will hold this func.)
     return email.length > 0
   }, 'user email cannot be blank');
 
   schema.path('password').validate(function (email) {
-    //~ XXX check if this is an email (server.utils will hold this func.)
+    //~ TODO check if this is an email (server.utils will hold this func.)
     return email.length > 0
   }, 'user password cannot be blank');
 

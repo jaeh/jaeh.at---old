@@ -5,7 +5,7 @@ var mongoose = require('mongoose')
   , path = require('path')
   , utils = require(path.join(__dirname, '../utils'));
 
-exports.init = function(cb){
+exports.init = function(cb) {
 
   var schema = new Schema({
     values: {
@@ -36,7 +36,7 @@ exports.init = function(cb){
   schema.pre('save', function(next) {
     this.values.slug = utils.slugify(this.values.title);
     
-    if(this.values.published === "on" || this.values.published === true){
+    if(this.values.published === "on" || this.values.published === true) {
       this.values.published = true;
     }else{
       this.values.published = false;

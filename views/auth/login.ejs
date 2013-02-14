@@ -7,17 +7,17 @@
       , css: 'green'
     };
     
-  if(typeof message !== "undefined" ) { 
-    if(message.class) {
+  if (typeof message !== "undefined" ) { 
+    if (message.class) {
       msg.css = message.class;
     }
-    if(message.text) {
+    if (message.text) {
       msg.text = message.text;
     }
   }
 %>
 
-<% if( typeof user !== "undefined" ){ %>
+<% if ( typeof user !== "undefined" ) { %>
   
   <div class="username"><%= user.name %></div>
   <a href="/logout">logout</a>
@@ -25,7 +25,7 @@
 <% }else{ %>
 
   <div  class="messages <%= msg.css %>">
-    <% if ( msg.text ){ %>
+    <% if ( msg.text ) { %>
       <%= msg.text %>
     <% } %>      
   </div>

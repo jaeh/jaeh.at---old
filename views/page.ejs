@@ -6,31 +6,31 @@
   
 %>   
 
-<% ut.each(page.values, function(val) {%>
+<% ut.each(page.values, function (val) {%>
   <%= val.key %>: <%= val.value %>
 <%});%>
 
-<% if( p.title ){ %>
+<% if ( p.title ) { %>
   <header>
     <h1><%= p.title %></h1>
   </header>
 <% } %>
 
 <div class="content">
-  <% if( p.logo ){ %>
+  <% if ( p.logo ) { %>
     <img 
       src="<%= p.logo.src %>" 
       class="floatleft" 
-      alt="<% if( p.logo.alt ){ %><%= p.logo.alt %><% } else { %><%= p.logo.title %><% } %>" 
-      title="<% if( p.logo.title ){ %><%= p.logo.title %><% } else { %><%= p.logo.alt %><% } %>" 
+      alt="<% if ( p.logo.alt ) { %><%= p.logo.alt %><% } else { %><%= p.logo.title %><% } %>" 
+      title="<% if ( p.logo.title ) { %><%= p.logo.title %><% } else { %><%= p.logo.alt %><% } %>" 
     />
   <% } %>
-  <% if( p.body ){ %>
+  <% if ( p.body ) { %>
     <div><%= p.body %></div>
   <% } %>
 </div>
 
-<% if( page.footer ){ %>
+<% if ( page.footer ) { %>
   <footer>
     <%= page.footer %>
   </footer>

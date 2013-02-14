@@ -7,7 +7,7 @@ var path = require('path')
   , utils = require(path.join(__dirname, '..', 'base', 'utils'));
   
   
-exports.init = function(bonobo){
+exports.init = function(bonobo) {
   
   bonobo.DoTheSetup = function(cb) {
     
@@ -20,7 +20,7 @@ exports.init = function(bonobo){
     for(var idx in bonobo.plugins) {
       var setupDir = path.join(bonobo.plugins[idx].rootDir, 'setup.js');
       
-      if(fs.existsSync(setupDir) ){
+      if(fs.existsSync(setupDir) ) {
         var setup = require(path.join(bonobo.plugins[idx].rootDir, 'setup'));
           
         
@@ -41,17 +41,17 @@ exports.init = function(bonobo){
       
           bonobo.getPluginSettings(settings, function(err, msg, setting) {
             
-            if(err) utils.each(err, function(err){errs.push(err);});
-            if(msg) utils.each(msg, function(msg){msgs.push(msg);});
+            if(err) utils.each(err, function(err) {errs.push(err);});
+            if(msg) utils.each(msg, function(msg) {msgs.push(msg);});
             
-            if(!setting){
+            if(!setting) {
               errs.push({message: "setup of a plugin has been called but the plugin seems to have no settings.js file", css: 'fail'});
               i++;
               if(i >= utils.count(setups)) cb(errs,msgs);
               return;
             }
             
-            if( typeof setup.setup !== "function" ){
+            if( typeof setup.setup !== "function" ) {
               errs.push({message: settings.name.value +" setup had no setup function.", css: 'fail'});
               
               i++;
@@ -77,54 +77,6 @@ exports.init = function(bonobo){
           });
         });
       }
-    });
-  }
-
-  
-  
-  
-  bonobo.AddMenuItem = function(mI, cb) {
-    var errs = []
-      , msgs = [];
-      
-    var MenuItem = mongoose.model('MenuItem');
-    
-    
-    MenuItem.findOne({'values.slug': utils.slugify(mI.text)}, function(err, menuItem){
-      if(err) errs.push({message: err, css: "fail"});
-      
-      menuItem = menuItem || new MenuItem();
-      
-      menuItem.values = mI;
-      
-      menuItem.save(function(err, msg) {
-                
-        if(!err) {      
-          msgs.push({message: 'menuItem '+menuItem.values.text+' save successful', css: 'win'});
-        } else {
-          errs.push({message: 'menuItem '+menuItem.values.text+' save errored: '+err, css: 'fail'});
-        }
-        
-        cb(errs, msgs, menuItem);
-        
-      });
-    });
-  }
-  
-  bonobo.AddPluginMenuItems = function(mIs) {
-    var mIList = {};
-    
-    utils.each(mIs.value, function(mI) {
-    
-      mIList[mI.key] = {};
-      
-      utils.each(mI.value.value, function(mIVal) {
-        mIList[mI.key][mIVal.key] = mIVal.value.value;
-      });
-    });
-    
-    utils.each(mIList, function(mI) {
-      bonobo.AddMenuItem(mI.value, function(err, msg){});
     });
   }
 }

@@ -21,7 +21,7 @@ exports.init = function(cb) {
     , author: ObjectId
   });
 
-  schema.pre('save', function(next){
+  schema.pre('save', function(next) {
     this.slug = utils.slugify(this.title);
     
     next();

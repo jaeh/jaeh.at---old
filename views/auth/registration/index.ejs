@@ -3,17 +3,17 @@
 <form method="post">
   <fieldset>
     <legend>
-      <% if( typeof locals.errors === "object" ){ %>
-        <% if( locals.errors.noname ){ %>
+      <% if ( typeof locals.errors === "object" ) { %>
+        <% if ( locals.errors.noname ) { %>
             <div class="error">username missing</div>
         <% } %>
-        <% if( locals.errors.noemail ){ %>
+        <% if ( locals.errors.noemail ) { %>
             <div class="error">email missing</div>
         <% } %>
-        <% if( locals.errors.nopassword ){ %>
+        <% if ( locals.errors.nopassword ) { %>
             <div class="error">password missing</div>
         <% } %>
-        <% if( locals.errors.userExists ){ %>
+        <% if ( locals.errors.userExists ) { %>
           <div class="error">user with this name or email exists already</div>
         <% } %>
       <% }else{ %>

@@ -5,14 +5,14 @@
     , currentUser = false;
   
   
-  if( typeof locals.pageData !== "undefined" ) {
+  if ( typeof locals.pageData !== "undefined" ) {
       pD = locals.pageData;
-      if(typeof pD.meta !== 'undefined' && typeof pD.meta.mIs !== 'undefined' && typeof pD.meta.mIs.footer !== 'undefined') {
+      if (typeof pD.meta !== 'undefined' && typeof pD.meta.mIs !== 'undefined' && typeof pD.meta.mIs.footer !== 'undefined') {
         mIs = pD.meta.mIs.footer;
       }
   }
   
-  if( typeof locals.currentUser !== 'undefined' ){
+  if ( typeof locals.currentUser !== 'undefined' ) {
     currentUser = locals.currentUser;
   }
 %>
@@ -20,14 +20,14 @@
     </article>
   
     <footer>
-      <% if( pD.footer ){ %>
+      <% if ( pD.footer ) { %>
         <%= pD.footer %>
       <% } %>
       
       <% if ( typeof menuItems !== 'undefined' && ut.count(menuItems) > 0 ) { %>
         <nav>
           <ul>
-            <% ut.each(menuItems.footer, function(menuItem){ %>
+            <% ut.each(menuItems.footer, function (menuItem) { %>
               <li>
                 <a href="<%= menuItem.value.url %>"><%= menuItem.value.text %></a>
               </li>
@@ -37,7 +37,7 @@
       <% } %>
     </footer>
     <div id="userinfo">
-      <% if( typeof currentUser !== 'undefined' && currentUser.name ){ %>
+      <% if ( typeof currentUser !== 'undefined' && currentUser.name ) { %>
         <%= currentUser.name %>
       <% } %>
     </div>

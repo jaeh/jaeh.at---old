@@ -66,7 +66,7 @@ var utils = module.exports = {
         
       }  
       
-      for(var i = 0; i < array.length; i++){
+      for(var i = 0; i < array.length; i++) {
         cb(array[i]);
       }
     }
@@ -94,60 +94,85 @@ var utils = module.exports = {
       return count;
     }
   , 
-  requestBodyToJSON: function(reqB){
-
+  requestBodyToJSON: function(reqB) {
+    //this function takes a one dimensional in object,  
+    //in reqB["some-json-object-notation"] = value
+    //usually coming from a html form element and converts it into
+    //out reqBody.some.json.object.notation = value
     var reqBody = {};
     
     for(var keys in reqB) {
+      //reference copy for this single value
+      var currentObject = reqBody;
       
+      //split the arraykey of the in reqB object
       var keyArr = keys.split('-');
+            
+      //this request.body object was the submit button
+      if(!keyArr[0] || keyArr[0] == 'submit') {continue;}
       
-      switch(keyArr.length){
-        case 1:
-          if(keyArr[0] == 'submit'){break;}
-          if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
-          reqBody[keyArr[0]] = reqB[keys];
-        break;
-        
-        case 2:
-          if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
-          if(!reqBody[keyArr[0]][keyArr[1]]) reqBody[keyArr[0]][keyArr[1]] = {};
-          
-          reqBody[keyArr[0]][keyArr[1]] = reqB[keys];
-        break;
-        
-        case 3:
-          if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
-          if(!reqBody[keyArr[0]][keyArr[1]]) reqBody[keyArr[0]][keyArr[1]] = {};
-          if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]] = {};
-          
-          reqBody[keyArr[0]][keyArr[1]][keyArr[2]] = reqB[keys];
-        break;
-        
-        case 4:
-        
-          if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
-          if(!reqBody[keyArr[0]][keyArr[1]]) reqBody[keyArr[0]][keyArr[1]] = {};
-          if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]] = {};
-          if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]] = {};
-          
-          reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]] = reqB[keys];
-        break;
-        
-        case 5:
-        
-          if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
-          if(!reqBody[keyArr[0]][keyArr[1]]) reqBody[keyArr[0]][keyArr[1]] = {};
-          if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]] = {};
-          if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]] = {};
-          if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]][keyArr[4]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]][keyArr[4]] = {};
-          
-          reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]][keyArr[4]] = reqB[keys];
-        break;
+      //loops over the array of keys of this single value
+      for(var i = 0; i < keyArr.length; i++ ) {
+        //this is the last key, assign the value
+        if(i >= keyArr.length -1) {
+          currentObject[keyArr[i]] = reqB[keys];
+          break;
+        }
+        //this is not the last key, create the next subobject and retry
+        if(!currentObject[keyArr[i]]) { 
+          //just creating an empty element to make sure we can assign to this in the next run of the loop
+          currentObject[keyArr[i]] = {}
+        };
+        //make subobject to the object for the next run of the loop
+        currentObject = currentObject[keyArr[i]];
       }
     }
-    
-      return reqBody;
+    //all objects and subobjects in any depth have been assigned, return them
+    return reqBody;
   }
     
 }
+// TODO old code
+      //~ switch(keyArr.length) {
+        //~ case 1:
+          //~ if(keyArr[0] == 'submit') {break;}
+          //~ if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
+          //~ reqBody[keyArr[0]] = reqB[keys];
+        //~ break;
+        //~ 
+        //~ case 2:
+          //~ if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
+          //~ if(!reqBody[keyArr[0]][keyArr[1]]) reqBody[keyArr[0]][keyArr[1]] = {};
+          //~ 
+          //~ reqBody[keyArr[0]][keyArr[1]] = reqB[keys];
+        //~ break;
+        //~ 
+        //~ case 3:
+          //~ if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
+          //~ if(!reqBody[keyArr[0]][keyArr[1]]) reqBody[keyArr[0]][keyArr[1]] = {};
+          //~ if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]] = {};
+          //~ 
+          //~ reqBody[keyArr[0]][keyArr[1]][keyArr[2]] = reqB[keys];
+        //~ break;
+        //~ 
+        //~ case 4:
+        //~ 
+          //~ if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
+          //~ if(!reqBody[keyArr[0]][keyArr[1]]) reqBody[keyArr[0]][keyArr[1]] = {};
+          //~ if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]] = {};
+          //~ if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]] = {};
+          //~ 
+          //~ reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]] = reqB[keys];
+        //~ break;
+        //~ 
+        //~ case 5:
+        //~ 
+          //~ if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
+          //~ if(!reqBody[keyArr[0]][keyArr[1]]) reqBody[keyArr[0]][keyArr[1]] = {};
+          //~ if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]] = {};
+          //~ if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]] = {};
+          //~ if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]][keyArr[4]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]][keyArr[4]] = {};
+          //~ 
+          //~ reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]][keyArr[4]] = reqB[keys];
+        //~ break;
+        //~ 

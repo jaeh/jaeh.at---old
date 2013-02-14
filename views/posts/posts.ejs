@@ -9,18 +9,18 @@
 
 <header>posts index page.</header>
 
-<% if(pag.above.show == true) { %>
+<% if (pag.above.show == true) { %>
   <div class="pagination">
 
-    <% if( pag.prev.show == true ) { %>
+    <% if ( pag.prev.show == true ) { %>
       <a class="pag-prev" href="<%= pag.prev.url %>"><%= pag.prev.text %></a>
     <% } %> 
     
-    <% if( pag.count.show == true ){ %>
+    <% if ( pag.count.show == true ) { %>
       showing page <%= pag.count.current %> of <%= pag.count.end %>
     <% } %>
     
-    <% if( pag.next.show == true ) { %>
+    <% if ( pag.next.show == true ) { %>
       <a class="pag-next" href="<%= pag.next.url %>"><%= pag.next.text %></a>
     <% } %> 
 
@@ -28,8 +28,8 @@
 <% } %>
 
 
-<% ut.each(locals.posts, function (p){ %>
-  <section class="post<% ut.each(p.categories, function(cat){ %> <%= cat.name %><% }); %>">
+<% ut.each(locals.posts, function (p) { %>
+  <section class="post<% ut.each(p.categories, function (cat) { %> <%= cat.name %><% }); %>">
     <header class="<%= p.value.slug %>">
       <a href="/post/<%=p.value.slug%>"><%= p.value.title %></a>
       <div class="createdAt"><%=: p.value.createdAt|momentize %></div>
@@ -41,22 +41,22 @@
   </section>
 <% }); %>
 
-<% if( ut.count(locals.posts) <= 0 ){ %>
+<% if ( ut.count(locals.posts) <= 0 ) { %>
   <div class="noposts">there are no posts to display</div>
 <% } %>
 
-<% if(pag.above.show == true) { %>
+<% if (pag.above.show == true) { %>
   <div class="pagination">
 
-    <% if( pag.prev.show == true ) { %>
+    <% if ( pag.prev.show == true ) { %>
       <a class="pag-prev" href="<%= pag.prev.url %>"><%= pag.prev.text %></a>
     <% } %> 
     
-    <% if( pag.count.show == true ){ %>
+    <% if ( pag.count.show == true ) { %>
       showing page <%= pag.count.current %> of <%= pag.count.end %>
     <% } %>
     
-    <% if( pag.next.show == true ) { %>
+    <% if ( pag.next.show == true ) { %>
       <a class="pag-next" href="<%= pag.next.url %>"><%= pag.next.text %></a>
     <% } %> 
 

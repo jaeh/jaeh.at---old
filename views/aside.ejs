@@ -4,24 +4,24 @@
     
   var aside = false;
   
-  if(typeof pD !== "undefined" && pD.meta) {
+  if (typeof pD !== "undefined" && pD.meta) {
     aside = pD.meta.aside;
   }
 %>
-  <% if( aside != false) { %>
+  <% if ( aside != false) { %>
     <aside>
-      <% if (aside.title ){ %>
+      <% if (aside.title ) { %>
         <header><%= aside.title %></header>
       <% } %>
       
-      <% if ( aside.body ){ %>
+      <% if ( aside.body ) { %>
         <div><%= aside.body %></div>
       <% } %>
       
       <section class="widget">
-        <% ut.each(aside.widgets, function(wgt){ %>
-          <ul<% if( wgt.value.name ){ %> class="<%= wgt.value.name%>"<% } %>>
-            <% if( wgt.value.title ){ %>
+        <% ut.each(aside.widgets, function (wgt) { %>
+          <ul<% if ( wgt.value.name ) { %> class="<%= wgt.value.name%>"<% } %>>
+            <% if ( wgt.value.title ) { %>
               <li><%= wgt.value.title %></li>
             <% } %>
             <% if ( wgt.value.body ) { %>

@@ -9,7 +9,7 @@ var path      = require('path')
 
 
 exports.init = function(bonobo) {
-  bonobo.DoTheMiddleWare = function(base, req,res, next) {
+  bonobo.DoTheMiddleWare = function(base, req, res, next) {
     var i = 0;
     
     utils.each(bonobo.middleWare, function(mW) {

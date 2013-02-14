@@ -8,7 +8,7 @@ var path      = require('path')
   , server = require(path.join(__dirname, '..', 'server'));
 
 
-exports.init = function(bonobo){
+exports.init = function(bonobo) {
 
   bonobo.RouteThemAll = function(base, cb) {
   
@@ -90,7 +90,7 @@ exports.init = function(bonobo){
               }
             }
 
-            for(var idx in base.posts){
+            for(var idx in base.posts) {
               var poster = base.posts[idx];
               if(poster.url && poster.route) {
                 //~ console.log('initialise poster:');

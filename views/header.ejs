@@ -31,7 +31,7 @@
       <% if ( typeof menuItems !== 'undefined' && ut.count(menuItems) > 0 ) { %>
         <nav>
           <ul>
-            <% ut.each(menuItems.header, function(menuItem){ %>
+            <% ut.each(menuItems.header, function(menuItem) { %>
               <li>
                 <a href="<%= menuItem.value.url %>"><%= menuItem.value.text %></a>
               </li>

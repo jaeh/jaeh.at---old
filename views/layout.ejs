@@ -56,15 +56,15 @@
     <footer>
       <%= locals.pageData.footer %>
       
-      <% if( locals.pageData.meta.mIs.footer ){ %>
+      <% if( locals.pageData.meta.mIs.footer ) { %>
         <nav>
           <ul>
             
-            <% pageData.meta.mIs.footer.forEach(function(f){ %>
+            <% pageData.meta.mIs.footer.forEach(function(f) { %>
               <li><a f.href="<%= f.url %>"><%= f.text %></a></li>
             <% } %>
             
-            <% for( var idx in pageData.meta.mIs.footer ){ %>
+            <% for( var idx in pageData.meta.mIs.footer ) { %>
               <li><a href="<%= url %>"><%= text %></a></li>
             <% } %>
           </ul>

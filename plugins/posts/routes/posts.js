@@ -41,7 +41,7 @@ routes.posts = function(req, res, next) {
       
       var countEnd = skipFrom + postsPerPage -1;
       
-      if(countEnd > count ){
+      if(countEnd > count ) {
         countEnd = count;
       }
           
@@ -52,7 +52,7 @@ routes.posts = function(req, res, next) {
       var modulo = count % postsPerPage;
       //~ 
       //~ console.log('modulo ='+modulo);
-      if( modulo > 0 ){
+      if( modulo > 0 ) {
         endPaginationPage++;
       }
       //~ console.log('skipFrom ='+skipFrom+' count ='+count);

@@ -8,7 +8,7 @@ var path      = require('path')
   , server = require(path.join(__dirname, '..', 'server'))
   , modelPaths = [];
   
-exports.init = function(bonobo){ 
+exports.init = function(bonobo) { 
   
   bonobo.DoThemModels = function(cb) {
     
@@ -31,7 +31,7 @@ exports.init = function(bonobo){
       , totalModels = 0;
       
     // load and setup models from all plugins
-    utils.each(modelPaths, function(p){
+    utils.each(modelPaths, function(p) {
       
       //load every file found in every modelpath dir
       var modelFiles = fs.readdirSync(p.value);

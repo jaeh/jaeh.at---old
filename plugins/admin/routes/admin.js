@@ -22,7 +22,7 @@ routes.settings = function(req, res, next) {
     
     utils.each(settings, function(opt) {
       
-      if(opt.value.values){
+      if(opt.value.values) {
        
         opts.push(opt.value.values);
       }

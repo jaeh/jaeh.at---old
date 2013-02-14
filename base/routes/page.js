@@ -8,13 +8,13 @@ var mongoose = require('mongoose')
  * GET home page.
  */
 
-exports.page = function(req, res){
+exports.page = function(req, res) {
 
   var Page = mongoose.model('Page');
   
   var pageSlug = req.params.page;
   
-  if(!pageSlug || pageSlug === "/"){
+  if(!pageSlug || pageSlug === "/") {
     pageSlug = "home"
   }
     
@@ -25,13 +25,13 @@ exports.page = function(req, res){
   .findOne({"values.slug": pageSlug})
   .exec(function(err, page) {
     
-    if(!base.locals.pageData){      
+    if(!base.locals.pageData) {      
       console.log('pageData not found in db, redirecting to setup');
       res.redirect("setup");
       return;
     }
     
-    if(!page){
+    if(!page) {
       console.log('page'+pageSlug+' not found in db, redirecting to 4oh4');
       res.redirect("4oh4");
       return;

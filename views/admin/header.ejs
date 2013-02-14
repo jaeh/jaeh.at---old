@@ -3,9 +3,9 @@
     , mIs = false
     , ut = locals.utils;
   
-  if( typeof locals.pageData == 'object' ) {
+  if ( typeof locals.pageData == 'object' ) {
     pD = locals.pageData;
-    if(typeof pD.meta !== 'undefined' && typeof pD.meta.mIs !== 'undefined' && typeof pD.meta.mIs.header !== 'undefined') {
+    if (typeof pD.meta !== 'undefined' && typeof pD.meta.mIs !== 'undefined' && typeof pD.meta.mIs.header !== 'undefined') {
       mIs = pD.meta.mIs.header;
     }
   }
@@ -31,7 +31,7 @@
       <% if ( typeof mIs !== 'undefined' && mIs != false ) { %>
         <nav>
           <ul>
-            <% ut.each(mIs, function(mI){ %>
+            <% ut.each(mIs, function (mI) { %>
               <li><a href="<%= mI.value.url %>"><%= mI.value.text %></a></li>
             <% }) %>
           </ul>

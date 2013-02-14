@@ -1,42 +1,42 @@
 <table id="<%= setting.key %>-list" class="container">
   <tbody>
-      <% ut.each(setting.value.value, function(set) { %>
+      <% ut.each(setting.value.value, function (set) { %>
         <tr class="fields">
           <th><%= set.key %>:</th>
           <% var id = "", sid = kid = uid = lid = setting.key + "-"+ set.key; %>
           
           <td>
-            <% if(set.value.type.indexOf("list") >= 0 ){ %>
+            <% if (set.value.type.indexOf("list") >= 0 ) { %>
               <% include imageListInputField %>
               <label class="desc"><%= set.value.desc %></label>
               <table>
                 <tbody>
-                  <% ut.each(set.value.value, function(set) {%>
+                  <% ut.each(set.value.value, function (set) {%>
                     <% kid = sid; %>
                     <tr>
                       <td><%= set.key %>:</td>
                       <% kid += "-"+set.key; %>
                       
                       <td>
-                        <% if(set.value.type.indexOf("list") >= 0 ){ %>
+                        <% if (set.value.type.indexOf("list") >= 0 ) { %>
                           <label class="desc"><%= set.value.desc %></label>
                           <% include imageListInputField %>
                           
                           <table>
                             <tbody>
-                              <% ut.each(set.value.value, function(set) {%>
+                              <% ut.each(set.value.value, function (set) {%>
                                 <% uid = kid; %>
                                 <tr>
                                   <th><%= set.key %>:</th>
                                   <% uid += "-"+set.key; %>
                                   
                                   <td>
-                                    <% if(set.value.type.indexOf("list") >= 0 ){ %>
+                                    <% if (set.value.type.indexOf("list") >= 0 ) { %>
                                       <label class="desc"><%= set.value.desc %></label>
                                       <% include imageListInputField %>
                                       <table>
                                         <tbody>
-                                          <% ut.each(set.value.value, function(set) {%>
+                                          <% ut.each(set.value.value, function (set) {%>
                                             <% lid = kid; %>
                                             <tr>
                                               <th><%= set.key %>:</th>

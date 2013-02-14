@@ -6,27 +6,27 @@
 %>
 
 <div class="message">
-  <header>Hello <% if(locals.currentUser && locals.currentUser.name && typeof locals.currentUser.name !== "undefined" ){ %><%= locals.currentUser.name %><% } %></header>
+  <header>Hello <% if (locals.currentUser && locals.currentUser.name && typeof locals.currentUser.name !== "undefined" ) { %><%= locals.currentUser.name %><% } %></header>
   <form method="post">
     <fieldset>
       <legend>
-        <% if( typeof locals.errors !== 'undefined' ) { %>
-          <% if( locals.errors.norandom ){ %>
+        <% if ( typeof locals.errors !== 'undefined' ) { %>
+          <% if ( locals.errors.norandom ) { %>
             <div class="error">activation random missing.</div>
           <% } %>
           
-          <% if( locals.errors.noemail ){ %>
+          <% if ( locals.errors.noemail ) { %>
             <div class="error">email missing</div>
           <% } %>
           
-          <% if( locals.errors.nouser ){ %>
+          <% if ( locals.errors.nouser ) { %>
             <div class="error">no matching user has been found in the database.</div>
           <% } %>
         <% } %>
         
         
         
-        <% if( typeof locals.errors === 'undefined' && locals.email ){ %>
+        <% if ( typeof locals.errors === 'undefined' && locals.email ) { %>
           The confirmation code has been sent to <%= locals.email %>. Check your inbox.
         <% } %>
         

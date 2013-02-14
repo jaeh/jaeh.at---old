@@ -18,9 +18,9 @@ base.rootDir = __dirname;
 base.modelPaths = [];
 
 
-base.config = function(server, cb) {
+base.config = function (server, cb) {
   
-  base.configure(function() {
+  base.configure(function () {
     
     base.set('views', path.join(server.rootDir, 'views')); // use appRootDir/views as template directory
     //~ 
@@ -35,7 +35,7 @@ base.config = function(server, cb) {
     
     base.use(stylus.middleware({
         src: server.rootDir + '/public/'
-      , compile: function(str, path) {
+      , compile: function (str, path) {
       return stylus(str)
         .set('filename', path)
         .set('compress', true);
@@ -61,21 +61,20 @@ base.config = function(server, cb) {
     
     
     //custom middleware to get all base.locals that we need...
-    base.use(function(req, res, next) {
+    base.use(function (req, res, next) {
       
       base.locals.utils = utils;
     
-      mongoose.model("PageData")
-      .findOne({"values.appname": "base"}, function(err, pageData) {
+      mongoose.model("PageData").findOne({"values.appname": "base"}, function (err, pageData) {
         
-        if(!pageData) {
+        if (!pageData) {
         
-          if(req.path.indexOf('setup') === -1) {
+          if (req.path.indexOf('setup') === -1) {
             res.redirect('/setup');
             return;
           }
         }
-        if(pageData && pageData.values) {
+        if (pageData && pageData.values) {
           base.locals.pageData = pageData.values;
         }
         
@@ -83,44 +82,39 @@ base.config = function(server, cb) {
       });      
     });
 
-    //custom middleware to get all base.locals that we need...
-    base.use(function(req,res,next) {
+    //custom middleware to get all menuitems that are published...
+    base.use(function (req,res,next) {
      
-      mongoose.model("MenuItem").find({"values.published": true}).sort({"values.pos": "asc"}).exec(function(err, menuItems) {
+      mongoose.model("MenuItem").find({"values.published": true}).sort({"values.pos": "asc"}).exec(function (err, menuItems) {
         
-        //~ console.log('menuItems in base middleware=');
-        //~ console.log(menuItems);
-        //~ 
         var mIs = {}
         
-        utils.each(menuItems, function(mI){
+        utils.each(menuItems, function (mI) {
           
-          if(!mIs[mI.value.values.menu]) mIs[mI.value.values.menu] = [];
+          if (!mIs[mI.value.values.menu]) mIs[mI.value.values.menu] = [];
           
           mIs[mI.value.values.menu].push(mI.value.values);
         });
         
-        if(utils.count(mIs) > 0 ) {
+        //assign to base.locals to make available in all views
+        if (utils.count(mIs) > 0 ) {
           base.locals.menuItems = mIs;
         }
         next();
       });      
     });
     
-    
-    //add custom plugin middleware from bonobo if any is there.
-    utils.each(bonobo.middleWare, function(mW) {
-      if(typeof mW === 'function' ) {
-        base.use(mW);
-      }
+    base.use(function(req,res,next) {
+      //execute plugin middleware
+      bonobo.DoTheMiddleWare(base, req, res, next);
     });
+      
     //route page calls last
     base.use(base.router);
-
   });
   
   //setup the mongodb and the errorhandlers
-  base.configure('development', function(){
+  base.configure('development', function () {
     base.use(express.errorHandler());
     
     // Bootstrap db connection
@@ -130,16 +124,16 @@ base.config = function(server, cb) {
   cb(null, [{message: "base configure success", css: "win"}]);
 }
 
-base.GetPageData = function(cb) {
+base.GetPageData = function (cb) {
   
   var PageData = mongoose.model("PageData");
   
-  PageData.findOne({'values.appname': 'base'}).exec(function(err, pageData) {
+  PageData.findOne({'values.appname': 'base'}).exec(function (err, pageData) {
     
-    if(!pageData ) {
+    if (!pageData ) {
       pageData = new PageData();
       pageData.values = require(path.join(__dirname, 'settings')).pageData;
-      pageData.save(function(err){
+      pageData.save(function (err) {
           returnPageData(null, pageData, cb);
       });
       return;
@@ -149,22 +143,22 @@ base.GetPageData = function(cb) {
   });
 }
 
-base.UpdatePageData = function(object, cb) {
-  if(!object || !cb) {
+base.UpdatePageData = function (object, cb) {
+  if (!object || !cb) {
     cb("base.UpdatePageData(object, callback) called with missing arguments"); 
   }
   
   var PageData = mongoose.model("PageData");
   
-  PageData.findOne({'values.appname': 'base'}).exec(function(err, pageData) {
+  PageData.findOne({'values.appname': 'base'}).exec(function (err, pageData) {
  
-    if(!pageData ) {
+    if (!pageData ) {
       pageData = new PageData();
     }
 
     pageData.values = object;
         
-    pageData.save(function(err) {
+    pageData.save(function (err) {
       returnPageData(err, pageData, cb);
     });
     
