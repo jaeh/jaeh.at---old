@@ -1,0 +1,44 @@
+<% /* some shortcutting first */
+  var pD = pageData || { title: "admin", logo: {src: '/images/logo.png', alt: "jaeh.at", title: "jaeh.at" }}
+    , mIs = menuItems || false
+    , ut = locals.utils;
+  
+  if( typeof locals.pageData === 'object' ) {
+    pD = locals.pageData;
+  }
+%>
+
+<!doctype html>
+<html>
+  <head>
+    <title><%= pD.title %></title>
+  
+    <link rel='stylesheet' href='/css/style.css'>
+    <link rel='stylesheet' href='/css/adminstyle.css'>
+  </head>
+
+  <body>
+    <header>
+      <div id="logo">
+        <% if (pD.logo && pD.logo.src) { %>
+          <img src="<%= pD.logo.src %>" alt="<%= pD.logo.alt %>" title="<%= pD.logo.title %>">
+        <% }else{ %>
+          <%= pD.title %>
+        <% } %>
+      </div>
+      
+      <% if ( mIs && ut.count(mIs) > 0 ) { %>
+        <nav>
+          <ul>
+            <% ut.deprecated_each(mIs.adminheader, function(menuItem) { %>
+              <li>
+                <a href="<%= menuItem.value.url %>"><%= menuItem.value.text %></a>
+              </li>
+            <% }); %>
+          </ul>
+        </nav>
+      <% } %>
+      
+    </header>
+    
+    <article>

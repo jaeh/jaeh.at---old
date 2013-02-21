@@ -3,19 +3,19 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node app"
+    "start": "node server"
   },
   "dependencies": {
-      "express"       : ">=3.0.6"
-    , "ejs"           : "latest"
-    , "stylus"        : "latest"
-    , "mongoose"      : "latest"
-    , "mongoose-types": "latest"
-    , "passport"      : "latest"
-    , "passport-local": "latest"
-    , "underscore"    : "latest"
-    , "jshashes"      : "latest"
-    , "moment"        : "latest"
-    , "async"         : "latest"
+    "express"       : ">=3.0.6",
+    "ejs"           : "latest",
+    "stylus"        : "latest",
+    "mongoose"      : "latest",
+    "mongoose-types": "latest",
+    "passport"      : "latest",
+    "passport-local": "latest",
+    "underscore"    : "latest",
+    "jshashes"      : "latest",
+    "moment"        : "latest",
+    "async"         : "latest"
   }
 }

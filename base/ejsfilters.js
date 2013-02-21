@@ -11,7 +11,7 @@ var filters = module.exports = function() {
     return date;
   }
   
-  ejs.filters.variableInputField = createInputField;
+  //~ ejs.filters.variableInputField = createInputField;
   
 }
 
@@ -33,11 +33,9 @@ function createInputField(value) {
   }
   
   if( val.type === "list" ){
-    //~ console.log('val.value = ');
-    //~ console.log(val.value);
     
     var str = '<label class="desc">'+val.desc+'</label><table><tbody>';
-      utils.each(val.value, function(set) {
+      utils.deprecated_each(val.value, function(set) {
         str += "<tr>"
             + "<td>"+set.key+":</td><td>"
             + createInputField(set)
@@ -52,7 +50,7 @@ function createInputField(value) {
     var v = val.options;
     
     str = '<select name="'+value.key+'-'+val.key+'" id="'+value.key+'-'+val.key+'">';
-    utils.each(val.options, function(v) {
+    utils.deprecated_each(val.options, function(v) {
       str += '<option value="'+v.value+'">'+v.value+'</option>'
     });
     
@@ -60,11 +58,9 @@ function createInputField(value) {
   
   if( val.type === "version" ) {
     var v = val.value.split(".");
-    //~ 
-    //~ console.log('v = ');
-    //~ console.log(v);
-    utils.each(v, function(vi) {
-      //~ console.log('vi = '+vi.value);
+    
+    utils.deprecated_each(v, function(vi) {
+      
       str += '<input class="compact" type="number" maxlength="1" min="0" max="99" value="'+vi.value+'" name="'+value.key+'-'+vi.key+'" id="'+value.key+'-'+vi.key+'" />';
     });
   }

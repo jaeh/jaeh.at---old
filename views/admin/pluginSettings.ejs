@@ -1,31 +1,24 @@
-<% var ut = locals.utils;
-%>
+<% var ut = locals.utils;%>
 
-<% ut.each( locals.messages, function(msg) { %>
-  <div class="<%= css %>"><%= text %></div>
-<% }); %>
-
-<% include header.ejs %>
+<% include adminheader.ejs %>
 
 
-<form action="" method="post">
+<form method="post">
   <fieldset>
-    <legend>Options:</legend>
-    <% ut.each(locals.settings.values, function(setting) { %>
-      <div class="fields">
-        <label for="<%= setting.key %>"><%= setting.key %></label>
-        <%-: setting|variableInputField %>
-      </div>
-    <% }); %>
     
+    <legend>These are settings for the <%= setting.key %> plugin:</legend>
+
+    <div class="form-fields">
+      <% include variableInputTable %>
+    </div>
+     
     <div class="fields">
-      <input type="submit" value="save options" />
+      <input name="submit" type="submit" value="save settings" />
     </div>
   </fieldset>
 </form>
 
+<% include adminaside.ejs %>
 
-<% include aside.ejs %>
-
-<% include footer.ejs %>
+<% include adminfooter.ejs %>
 

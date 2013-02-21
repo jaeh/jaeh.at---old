@@ -12,7 +12,7 @@ exports.init = function(bonobo) {
   bonobo.DoTheMiddleWare = function(base, req, res, next) {
     var i = 0;
     
-    utils.each(bonobo.middleWare, function(mW) {
+    utils.deprecated_each(bonobo.middleWare, function(mW) {
       if(typeof mW === 'function') {
         base.use(mW);
       }

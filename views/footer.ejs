@@ -1,35 +1,23 @@
 <% /* some shortcutting  */
-  var pD = { title: "setup"}
-    , mIs = false
+  var pageData = locals.pageData || { title: "setup"}
+    , menuItems = locals.menuItems || {}
     , ut = locals.utils
-    , currentUser = false;
-  
-  
-  if ( typeof locals.pageData !== "undefined" ) {
-      pD = locals.pageData;
-      if (typeof pD.meta !== 'undefined' && typeof pD.meta.mIs !== 'undefined' && typeof pD.meta.mIs.footer !== 'undefined') {
-        mIs = pD.meta.mIs.footer;
-      }
-  }
-  
-  if ( typeof locals.currentUser !== 'undefined' ) {
-    currentUser = locals.currentUser;
-  }
+    , currentUser = currentUser || false;
 %>
 
     </article>
   
     <footer>
-      <% if ( pD.footer ) { %>
-        <%= pD.footer %>
+      <% if ( pageData.footer ) { %>
+        <%= pageData.footer %>
       <% } %>
       
       <% if ( typeof menuItems !== 'undefined' && ut.count(menuItems) > 0 ) { %>
         <nav>
           <ul>
-            <% ut.each(menuItems.footer, function (menuItem) { %>
+            <% ut.each(menuItems.footer, function (k, mI) { %>
               <li>
-                <a href="<%= menuItem.value.url %>"><%= menuItem.value.text %></a>
+                <a href="<%= mI.url %>"><%= mI.text %></a>
               </li>
             <% }) %>
           </ul>

@@ -14,17 +14,12 @@ var auth = module.exports = {
   , pluginName: "auth"
   , version:    "0.0.1" 
   , rootDir:    __dirname
-  , modelPaths: []
   , reqs: { gets: [], posts: [] }
 };
  
  
 auth.init = function(bonobo, cb) {
-  //~ 
-  auth.modelPaths.push(path.join(auth.rootDir, 'models'));
   
-  //~ authConfig.configure(base);
-
   auth.registration = require(path.join(auth.rootDir, 'registration')).init(auth);
   
   cb(null, auth);

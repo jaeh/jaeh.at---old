@@ -14,11 +14,18 @@
   <h2>Plugins:</h2>
   <ul class="plugins">
     <% ut.deprecated_each(locals.settings, function(set) { %>
-      <li>
-        <a href="/admin/plugins/<%= ut.slugify(set.value.name.value) %>"><%= set.value.name.value %></a>
-      </li>
+      <% if(typeof set.value.name === "string") { %>
+        <li>
+          <a href="/admin/plugins/<%= ut.slugify(set.value.name) %>"><%= set.value.name %></a>
+        </li>
+      <% } else { %>
+        <% ut.deprecated_each(set.value.name, function(s) { %>
+          <%= s.key %>:<%= s.value %>
+        <% }); %>
+      <% } %>
     <% }); %>
   </ul>
+  
 </div>
 
 

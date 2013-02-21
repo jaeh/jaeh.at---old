@@ -8,24 +8,16 @@ var express = require('express')
   , moment = require('moment')
   , stylus = require('stylus')
   , utils = require(path.join(__dirname, "utils"))
-  , bonobo = require(path.join(__dirname, '..', 'bonobo', 'bonobo'));
-  
-
-var base = module.exports = express();
+  , bonobo = require(path.join(__dirname, '..', 'bonobo', 'bonobo'))
+  , base = module.exports = express();
 
 base.rootDir = __dirname;
-
-base.modelPaths = [];
-
 
 base.config = function (server, cb) {
   
   base.configure(function () {
     
     base.set('views', path.join(server.rootDir, 'views')); // use appRootDir/views as template directory
-    //~ 
-    //~ ejs.open = '{{';
-    //~ ejs.close = '}}';
 
     require(path.join(__dirname, 'ejsfilters'))();
     
@@ -64,7 +56,12 @@ base.config = function (server, cb) {
     base.use(function (req, res, next) {
       
       base.locals.utils = utils;
-    
+      
+      //~ mongoose.model("PageData").findOne({},function(err,pg){
+        //~ console.log('pg =');
+        //~ console.log(pg);
+      //~ });
+      
       mongoose.model("PageData").findOne({"values.appname": "base"}, function (err, pageData) {
         
         if (!pageData) {
@@ -84,12 +81,12 @@ base.config = function (server, cb) {
 
     //custom middleware to get all menuitems that are published...
     base.use(function (req,res,next) {
-     
+      
       mongoose.model("MenuItem").find({"values.published": true}).sort({"values.pos": "asc"}).exec(function (err, menuItems) {
         
         var mIs = {}
         
-        utils.each(menuItems, function (mI) {
+        utils.deprecated_each(menuItems, function (mI) {
           
           if (!mIs[mI.value.values.menu]) mIs[mI.value.values.menu] = [];
           

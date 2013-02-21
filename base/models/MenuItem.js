@@ -19,11 +19,6 @@ exports.init = function(cb) {
     }
   });
 
-  //~ 
-  //~ schema.methods.getMenu = function() {
-    //~ 
-  //~ }
-
   schema.path('values.text').validate(function (text) {
     return text.length > 0
   }, 'menuItem text cannot be blank');
@@ -34,6 +29,7 @@ exports.init = function(cb) {
 
   schema.pre('save', function(next) {
     
+    
     this.values.slug = utils.slugify(this.values.text);
     
     if(this.values.published === "on" || this.values.published === true){
@@ -43,11 +39,11 @@ exports.init = function(cb) {
     }
     
     
+
     next();
   });
 
   mongoose.model('MenuItem', schema);
 
   cb(null,null);
-  
 }

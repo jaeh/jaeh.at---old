@@ -28,8 +28,8 @@
 <% } %>
 
 
-<% ut.each(locals.posts, function (p) { %>
-  <section class="post<% ut.each(p.categories, function (cat) { %> <%= cat.name %><% }); %>">
+<% ut.deprecated_each(locals.posts, function (p) { %>
+  <section class="post<% ut.deprecated_each(p.categories, function (cat) { %> <%= cat.name %><% }); %>">
     <header class="<%= p.value.slug %>">
       <a href="/post/<%=p.value.slug%>"><%= p.value.title %></a>
       <div class="createdAt"><%=: p.value.createdAt|momentize %></div>

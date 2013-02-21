@@ -6,7 +6,7 @@
 %>
 
 <% if ( typeof locals.user !== 'undefined' ) { %>
-  <% ut.each( locals.user, function (val) { %>
+  <% ut.deprecated_each( locals.user, function (val) { %>
     <div><%= val.key %>: <%= val.value %></div>
   <% }) %>
 <% } %>

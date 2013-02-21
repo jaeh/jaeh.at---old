@@ -129,4 +129,15 @@ var settings = module.exports = {
       }
     }
   }
+  //~ , special_chars: {
+      //~ type: "list"
+    //~ , desc: "special chars for your language should be defined here, along with replacements that are valid in urls"
+    //~ , value: {
+        //~ type: "list"
+      //~ , desc: "these are the actual special_chars"
+      //~ , value: {
+          //~ ae: {value: "\u00df"
+      //~ }
+    //~ }
+  //~ }
 }

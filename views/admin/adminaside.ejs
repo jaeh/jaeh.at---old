@@ -1,8 +1,7 @@
 <% /* some shortcutting first */
   var pD = locals.pageData
-    , ut = locals.utils;
-    
-  var aside = false;
+    , ut = locals.utils
+    , aside = false;
   
   if (typeof pD !== "undefined" && pD.meta) {
     aside = pD.meta.aside;
@@ -19,7 +18,7 @@
       <% } %>
       
       <section class="widget">
-        <% ut.each(aside.widgets, function (wgt) { %>
+        <% ut.deprecated_each(aside.widgets, function (wgt) { %>
           <ul<% if ( wgt.value.name ) { %> class="<%= wgt.value.name%>"<% } %>>
             <% if ( wgt.value.title ) { %>
               <li><%= wgt.value.title %></li>

@@ -42,4 +42,4 @@ then just create a fork,
     
     node server.js
     
-there you go. :)
+enjoy. (allthough i am not too sure if this piece of software is enjoyable. yet.) ;)

@@ -8,8 +8,8 @@ var mongoose = require('mongoose')
   , utils = require(path.join('..', 'utils'));
 
 var routes = module.exports = {
-  gets: {},
-  posts: {}  
+  gets  : {},
+  posts : {}  
 };
 
 routes.gets.setup = function (req, res) {
@@ -25,23 +25,24 @@ routes.posts.setup = function (req, res) {
   
   var reqBody = utils.requestBodyToJSON(req.body);
   
+  
   createPageData(reqBody.pageData, function (err, msg) {
-    if (err) { utils.each(err, function (err) {if (err) errs.push(err)}); }
-    if (msg) { utils.each(msg, function (msg) {if (msg) msgs.push(msg)}); }
+    if (err) { utils.each(err, function (key,err) {if (typeof err === "object") errs.push(err)}); }
+    if (msg) { utils.each(msg, function (key,msg) {if (typeof msg === "object") msgs.push(msg)}); }
       
     createPages(reqBody.pages, function (err, msg) {      
       
-      if (err) { utils.each(err, function (err) {if (err) errs.push(err)}); }
-      if (msg) { utils.each(msg, function (msg) {if (msg) msgs.push(msg)}); }
+      if (err) { utils.each(err, function (key,err) {if (typeof err === "object") errs.push(err)}); }
+      if (msg) { utils.each(msg, function (key,msg) {if (typeof msg === "object") msgs.push(msg)}); }
             
       bonobo.DoTheSetup(function (err, msg) {
         
-        if (err) { utils.each(err, function (err) {if (err) errs.push(err)}); }
-        if (msg) { utils.each(msg, function (msg) {if (msg) msgs.push(msg)}); }
-              
+        if (err) { utils.each(err, function (key,err) {if (typeof err === "object") errs.push(err)}); }
+        if (msg) { utils.each(msg, function (key,msg) {if (typeof msg === "object") msgs.push(msg)}); }
+             
         createMenuItems(reqBody.mIs, function (err, msg) {
-          if (err) { utils.each(err, function (err) {if (err) errs.push( err )}); }
-          if (msg) { utils.each(msg, function (msg) {if (msg) msgs.push(msg)}); }
+          if (err) { utils.each(err, function (key,err) {if (typeof err === "object") errs.push(err)}); }
+          if (msg) { utils.each(msg, function (key,msg) {if (typeof msg === "object") msgs.push(msg)}); }
           
           res.render('setup', {showform: 'false', errs: errs, msgs: msgs});
         });
@@ -55,7 +56,7 @@ function createPageData(pD, cb) {
    
   var PageData = mongoose.model('PageData');
   
-  PageData.findOne({'values.appname': pD.appname}, function (err, pageData) {
+  PageData.findOne({'values.appname': pD.appname}, function(err, pageData) {
     pageData = pageData || new PageData();
     
     pageData.values = pD;
@@ -65,9 +66,9 @@ function createPageData(pD, cb) {
       
       if (!err) {      
         msg = [{message: 'pageData save successful', css: 'win'}];
+      } else {
+        err = [{message: err, css: 'err failure'}];
       }
-      err = [{message: err, css: 'err failure'}];
-      
       cb(err, msg);
     });
   });
@@ -82,14 +83,13 @@ function createPages(pages, cb) {
   
   var i = 0;
   
-  utils.each(pages, function (pageValues) {    
-    //~ console.log('pageValues =');
-    //~ console.log(pageValues.value.title);
+  utils.each(pages, function (key, pageValues) {    
+  
     
-    Page.findOne({'values.slug': utils.slugify(pageValues.value.title)}, function (err, page) {
+    Page.findOne({'values.slug': utils.slugify(pageValues.title)}, function (err, page) {
       page = page || new Page();
       
-      page.values = pageValues.value;
+      page.values = pageValues;
     
       page.save(function (err) {
         var msg = [false];
@@ -124,9 +124,9 @@ function createMenuItems(mIs, cb) {
   
   var i = 0;
   
-  utils.each(mIs, function (mIValues) {
+  utils.each(mIs, function (key, value) {
     
-    bonobo.AddMenuItem(mIValues.value, function (err, msg, menuItem) {        
+    bonobo.addMenuItem(value, function (err, msg, menuItem) {        
         
       i++;    
               
@@ -134,7 +134,7 @@ function createMenuItems(mIs, cb) {
         if (errs.length == 0) {
           msgs.push({message: 'menuItem setup successful, added '+i+' menuItems', css: 'win'});
         }else{
-          errs.push({message: 'menuItem '+menuItem.values.text+' setup completed with errors', css: 'fail'});
+          errs.push({message: 'menuItem setup completed with '+utils.count(errs)+' errors', css: 'fail'});
         }
         cb(errs, msgs);
       }

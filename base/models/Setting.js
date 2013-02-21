@@ -16,7 +16,13 @@ exports.init = function(cb) {
 
 
   schema.pre('save', function(next) {    
-    this.slug = utils.slugify(this.values.name.value);
+
+
+    if(typeof this.values.name === "object"){ 
+      this.slug = utils.slugify(this.values.name.value);
+    }else if( typeof this.values.name === "string") {
+      this.slug = utils.slugify(this.values.name);
+    }
     
     next();
   });

@@ -8,27 +8,29 @@ var path = require('path')
 var admin = module.exports = {
     routes:   {}
   , rootDir:  __dirname
-  , modelPaths: []
   , reqs: {
-        gets:  []
-      , admin: []
+      gets:  []
+    , posts: []
   }
 };
  
 admin.init = function(bonobo, cb) {
-  
-  admin.modelPaths.push(path.join(admin.rootDir, 'models/'));
-  
+    
   cb(null, admin);
 }
 
 admin.setupRoutes = function(bonobo) {
   
   //~ admin.routes.admin = require(path.join(base.rootDir, '/routes/page')).page
-  admin.routes = require(path.join(admin.rootDir, '/routes/admin'));
+  var gets = require(path.join(admin.rootDir, '/routes/gets'));
+  var posts = require(path.join(admin.rootDir, '/routes/posts'));
   
-  admin.reqs.gets.push({url: '/admin', route: admin.routes.admin});
-  admin.reqs.gets.push({url: '/admin/settings', route: admin.routes.settings});
-  admin.reqs.gets.push({url: '/admin/settings/:pluginSlug', route: admin.routes.pluginOptions});
+  admin.reqs.gets.push({url: '/admin', route: gets.admin});
+  admin.reqs.gets.push({url: '/admin/plugins', route: gets.plugins});
+  admin.reqs.gets.push({url: '/admin/plugins/:pluginSlug', route: gets.pluginSettings});
+  admin.reqs.gets.push({url: '/admin/users', route: gets.users});
+  admin.reqs.gets.push({url: '/admin/users/:userSlug', route: gets.userDetails});
+  
+  admin.reqs.posts.push({url: '/admin/plugins/:pluginSlug', route: posts.pluginSettings});
 }
 

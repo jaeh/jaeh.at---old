@@ -19,7 +19,7 @@
       <% } %>
       
       <section class="widget">
-        <% ut.each(aside.widgets, function (wgt) { %>
+        <% ut.deprecated_each(aside.widgets, function (wgt) { %>
           <ul<% if ( wgt.value.name ) { %> class="<%= wgt.value.name%>"<% } %>>
             <% if ( wgt.value.title ) { %>
               <li><%= wgt.value.title %></li>

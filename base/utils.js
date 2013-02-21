@@ -14,12 +14,14 @@ var utils = module.exports = {
       //first replace spaces with underscores and lowercase the slug
       slug = slug.replace(/\s/g, '_').toLowerCase();
 
-      //replace äüö with ae ue and oe for german titles
+      //replace ae ue oe and ss for german titles
       //later add support for more/other special chars defined in the admin interface 
-      //removing the need of adding them all here and always test against those that we need to test against
-      slug = slug.replace(/[\u00e4|\u00fc|\u00f6|\u00df]/g, function($0) { return MCMS.special_chars[$0] });
+      //removing the need of adding them all here and always only test against those that we need to test against
+      var specialChars = ["ae", "ue", "oe", "ss"];
+      
+      slug = slug.replace(/[\u00e4|\u00fc|\u00f6|\u00df]/g, function(idx) { return specialChars[idx] });
 
-      //remove all remaining specialchars, i dont like multiple underscores, so replace with nothing?
+      //remove all remaining specialchars, i dont like multiple underscores, so replace with nothing this time around.
       slug = slug.replace(/[^a-z0-9_]+/g, '');
 
       return slug;
@@ -54,7 +56,7 @@ var utils = module.exports = {
       return versionNumber;
     }
   
-  , each: function(arrayOrObject, cb) {
+  , deprecated_each: function(arrayOrObject, cb) {
            
       var array = [];
                 
@@ -68,6 +70,22 @@ var utils = module.exports = {
       
       for(var i = 0; i < array.length; i++) {
         cb(array[i]);
+      }
+    }
+  
+  
+  , each: function(arrayOrObject, cb) {
+           
+      var array = []
+        , i = 0
+        , last = false;
+                
+      for(var key in arrayOrObject) {
+        i++;
+        
+        last = (i >= utils.count(arrayOrObject));
+        
+        cb(key, arrayOrObject[key]);
       }
     }
   
@@ -102,77 +120,66 @@ var utils = module.exports = {
     var reqBody = {};
     
     for(var keys in reqB) {
-      //reference copy for this single value
-      var currentObject = reqBody;
+      var currentObject = reqBody;               //reference copy for this iteration
       
-      //split the arraykey of the in reqB object
-      var keyArr = keys.split('-');
+      var keyArr = keys.split('-');              //split the arraykey of the in reqB object
             
-      //this request.body object was the submit button
-      if(!keyArr[0] || keyArr[0] == 'submit') {continue;}
+      if(!keyArr[0] || keyArr[0] == 'submit') {  //this request.body object was the submit button
+        continue;
+      }
       
-      //loops over the array of keys of this single value
-      for(var i = 0; i < keyArr.length; i++ ) {
-        //this is the last key, assign the value
-        if(i >= keyArr.length -1) {
-          currentObject[keyArr[i]] = reqB[keys];
+      for(var i = 0; i < keyArr.length; i++ ) {   //loops over the array of keys of this single value
+
+        if(i >= keyArr.length -1) {               //this is the last key
+          currentObject[keyArr[i]] = reqB[keys];  //assign the value
           break;
         }
-        //this is not the last key, create the next subobject and retry
-        if(!currentObject[keyArr[i]]) { 
-          //just creating an empty element to make sure we can assign to this in the next run of the loop
-          currentObject[keyArr[i]] = {}
+        
+        if(!currentObject[keyArr[i]]) {           //this is not the last key
+          currentObject[keyArr[i]] = {};          //so we create an empty element to make sure we can assign to this in the next iteration
         };
-        //make subobject to the object for the next run of the loop
-        currentObject = currentObject[keyArr[i]];
+        
+        currentObject = currentObject[keyArr[i]]; //make subobject to the object for the next iteration
       }
     }
-    //all objects and subobjects in any depth have been assigned, return them
-    return reqBody;
+    return reqBody;                               //all objects and subobjects in any depth have been assigned, return them    
   }
+  ,
+  log : function(text){
+    console.log(text);
+  }
+  ,
+  settingsToMongo: function(setting) {              //this function maps settings.js files to mongodb setting objects.
+    var mongoObject = {};             
     
+    for(var key in setting) {
+      if(typeof setting[key].value !== "undefined") {
+        mongoObject[key] = setting[key].value;
+      }
+    }
+    
+    return mongoObject;
+  }
+  ,
+  getErrs: function(errs,err) {                     //get the new error array and return it
+    if(utils.count(err)>0) {
+      for(var key in err) {
+        if(typeof err[key] === "object" ){
+          errs.push(err[key]);
+        }
+      }
+    }
+    return errs;
+  }
+  ,
+  getMsgs: function(msgs,msg) {                     //get the new msg array and return it
+    if(utils.count(msg)>0) {
+      for(var key in msg) {
+        if(typeof msg[key] === "object" ){
+          msgs.push(msg[key]);
+        }
+      }
+    }
+    return msgs;
+  }  
 }
-// TODO old code
-      //~ switch(keyArr.length) {
-        //~ case 1:
-          //~ if(keyArr[0] == 'submit') {break;}
-          //~ if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
-          //~ reqBody[keyArr[0]] = reqB[keys];
-        //~ break;
-        //~ 
-        //~ case 2:
-          //~ if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
-          //~ if(!reqBody[keyArr[0]][keyArr[1]]) reqBody[keyArr[0]][keyArr[1]] = {};
-          //~ 
-          //~ reqBody[keyArr[0]][keyArr[1]] = reqB[keys];
-        //~ break;
-        //~ 
-        //~ case 3:
-          //~ if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
-          //~ if(!reqBody[keyArr[0]][keyArr[1]]) reqBody[keyArr[0]][keyArr[1]] = {};
-          //~ if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]] = {};
-          //~ 
-          //~ reqBody[keyArr[0]][keyArr[1]][keyArr[2]] = reqB[keys];
-        //~ break;
-        //~ 
-        //~ case 4:
-        //~ 
-          //~ if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
-          //~ if(!reqBody[keyArr[0]][keyArr[1]]) reqBody[keyArr[0]][keyArr[1]] = {};
-          //~ if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]] = {};
-          //~ if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]] = {};
-          //~ 
-          //~ reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]] = reqB[keys];
-        //~ break;
-        //~ 
-        //~ case 5:
-        //~ 
-          //~ if(!reqBody[keyArr[0]]) reqBody[keyArr[0]] = {};
-          //~ if(!reqBody[keyArr[0]][keyArr[1]]) reqBody[keyArr[0]][keyArr[1]] = {};
-          //~ if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]] = {};
-          //~ if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]] = {};
-          //~ if(!reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]][keyArr[4]]) reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]][keyArr[4]] = {};
-          //~ 
-          //~ reqBody[keyArr[0]][keyArr[1]][keyArr[2]][keyArr[3]][keyArr[4]] = reqB[keys];
-        //~ break;
-        //~ 

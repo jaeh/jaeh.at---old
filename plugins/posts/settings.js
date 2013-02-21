@@ -4,7 +4,7 @@ var settings = module.exports = {
     name: {value: 'posts', type: "text", desc: "the name of this plugin"}
   , version: {value: '0.0.1', type: "version", desc: "the version number of this plugin"}
   , setupDone: {value: false, type: "bool", desc: "has the setup for this plugin been completed?"}
-  , published: {value: true, type: "bool", desc: "is this plugin active?"}
+  , published: {value: false, type: "bool", desc: "is this plugin active?"}
   , pagination: {
         value: {
           show: { 

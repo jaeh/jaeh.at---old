@@ -8,13 +8,10 @@ var opengraphdata = module.exports = {
     pluginName: "opengraphdata"
   , version:    "0.0.1"
   , rootDir:    __dirname
-  , modelPaths: []
 };
  
  
 opengraphdata.init = function(bonobo, cb) {
-  
-  opengraphdata.modelPaths.push(path.join(opengraphdata.rootDir, 'models'));
   
   bonobo.middleWare.push(getGraphData);
   

@@ -4,6 +4,7 @@ body{line-height:1}
 ol,ul{list-style-type:none}
 blockquote q{quotes:none}
 blockquotebefore,blockquoteafter,qbefore,qafter{content:'';content:none}
+table{vertical-align:top;text-align:left}
 .floatleft{float:left}
 .floatright{float:right}
 .clearboth,footer{clear:both}

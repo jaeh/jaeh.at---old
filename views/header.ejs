@@ -1,18 +1,14 @@
 <% /* some shortcutting first */
-  var pD = { title: "setup", logo: '/images/logo.png' }
-    , mIs = false
+  var pageData = locals.pageData || { title: "setup", logo: {src: '/images/logo.png', title: 'jaeh.at', alt: 'jaeh.at'} }
+    , menuItems = locals.menuItems || false
     , ut = locals.utils;
-  
-  if( typeof locals.pageData === 'object' ) {
-    pD = locals.pageData;
-  }
   
 %>
 
 <!doctype html>
 <html>
   <head>
-    <title><%= pD.title %></title>
+    <title><%= pageData.title %></title>
   
     <link rel='stylesheet' href='/css/style.css'>
     <link rel='stylesheet' href='/css/adminstyle.css'>
@@ -21,19 +17,19 @@
   <body>
     <header>
       <div id="logo">
-        <% if (pD.logo) { %> 
-          <img src="<%= pD.logo.src %>" alt="<%= pD.logo.alt %>" title="<%= pD.logo.title %>">
+        <% if (pageData.logo && pageData.logo.src) { %> 
+          <img src="<%= pageData.logo.src %>" alt="<%= pageData.logo.alt %>" title="<%= pageData.logo.title %>">
         <% }else{ %>
-          <%= pD.title %>
+          <%= pageData.title %>
         <% } %>
       </div>
       
       <% if ( typeof menuItems !== 'undefined' && ut.count(menuItems) > 0 ) { %>
         <nav>
           <ul>
-            <% ut.each(menuItems.header, function(menuItem) { %>
+            <% ut.each(menuItems.header, function(k, mI) { %>
               <li>
-                <a href="<%= menuItem.value.url %>"><%= menuItem.value.text %></a>
+                <a href="<%= mI.url %>"><%= mI.text %></a>
               </li>
             <% }) %>
           </ul>

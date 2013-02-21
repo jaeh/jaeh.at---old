@@ -32,25 +32,34 @@ exports.init = function(bonobo) {
       }
     }
     
-    utils.each(setups, function(setUp) {
-      var setup = setUp.value;
+    utils.each(setups, function(key, setup) {
       
-      if(setup && setup.init && typeof setup.init === 'function') {
+      //~ console.log('setup =');
+      //~ console.log(setup);
+      
+      if(setup.init && typeof setup.init === 'function') {
        
         setup.init(function(settings) {
       
           bonobo.getPluginSettings(settings, function(err, msg, setting) {
+            errs = utils.getErrs(errs,err);
+            msgs = utils.getMsgs(msgs,msg);
             
-            if(err) utils.each(err, function(err) {errs.push(err);});
-            if(msg) utils.each(msg, function(msg) {msgs.push(msg);});
-            
-            if(!setting) {
+            if(!setting || !setting.values) {
               errs.push({message: "setup of a plugin has been called but the plugin seems to have no settings.js file", css: 'fail'});
               i++;
               if(i >= utils.count(setups)) cb(errs,msgs);
               return;
             }
             
+            
+            if(!setting.values.autoSetup || !setting.values.autoSetup.value) {
+              
+              i++;
+              if(i >= utils.count(setups)) cb(errs,msgs);
+              return;
+            }
+              
             if( typeof setup.setup !== "function" ) {
               errs.push({message: settings.name.value +" setup had no setup function.", css: 'fail'});
               
@@ -60,19 +69,21 @@ exports.init = function(bonobo) {
             }
               
               
-            setup.setup(function(errs, msgs) {
+            setup.setup(function(err, msg) {
+              errs = utils.getErrs(errs,err);
+              msgs = utils.getMsgs(msgs,msg);
+            
+              msgs.push({message: "setup of the "+setting.values.name.value+" plugin has been completed", css: 'win'});
               
-              console.log('setting.slug =');
-              console.log(setting);
+              setting.values.setupDone = true;
               
-              setting.values.setupDone.value = true;
-              
-              if(setting.values.mIs && utils.count(setting.values.mIs) > 0  ) {
-                bonobo.AddPluginMenuItems(setting.values.mIs);
+              if(setting.values.mIs && utils.count(setting.values.mIs) > 0 ) {
+                bonobo.addPluginMenuItems(setting.values.mIs);
               }
+              
               i++;
               if(i >= utils.count(setups)) cb(errs, msgs);
-
+            
             });
           });
         });

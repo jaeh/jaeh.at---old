@@ -20,19 +20,15 @@ var bonobo = module.exports = {
   
     rootDir : __dirname
   
-    //plugin object that holds the plugins
-  , plugins : {}
+  , plugins : {}    //plugin object that holds the plugins
   
-    //will be added to to enable models in plugins
-  , modelPaths : []
+  , modelPaths : [] //DEPRECATED
   
-    //these will be used in base.config to setup middleware for the various plugins
-  , middleWare: []
+  , middleWare: []  //these will be used in base.config to setup middleware for the various plugins
   
-    //reqs holds the http requests the plugins register  
-  , reqs : {
-        gets: []
-      , posts: []
+  , reqs : {        //reqs holds the http requests for all plugins
+        gets: []    //http get requests
+      , posts: []   //http post requests
     }
 };
 
@@ -66,11 +62,11 @@ bonobo.init = function(rootDir, cb) {
       i++;
       if(i >= utils.count(readDirs) ) {
         
-        setup.init(bonobo);
-        routes.init(bonobo);
-        middleware.init(bonobo);
-        pluginsettings.init(bonobo);
-        menuitems.init(bonobo);
+        setup.init(bonobo); //starts the setup of the base and the plugins that request autosetup
+        routes.init(bonobo); //sets the routes for the application
+        middleware.init(bonobo); //adds middleware from plugins
+        pluginsettings.init(bonobo); // gets and sets pluginsettings
+        menuitems.init(bonobo); //gets and sets menuitems
         
         
         cb(null, msgs);

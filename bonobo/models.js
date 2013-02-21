@@ -14,12 +14,12 @@ exports.init = function(bonobo) {
     
     modelPaths.push(path.join(__dirname, '..', 'base', 'models'));
     
-    utils.each(bonobo.plugins, function(plugin) {
+    utils.each(bonobo.plugins, function(k, plugin) {
       
-      var p = path.join(plugin.value.rootDir, 'models', '');
+      var p = path.join(plugin.rootDir, 'models');
       
       if(fs.existsSync(p)) {
-       modelPaths.push(p);
+        modelPaths.push(p);
       }
     });
       
@@ -31,10 +31,10 @@ exports.init = function(bonobo) {
       , totalModels = 0;
       
     // load and setup models from all plugins
-    utils.each(modelPaths, function(p) {
+    utils.each(modelPaths, function(k, modelPath) {
       
       //load every file found in every modelpath dir
-      var modelFiles = fs.readdirSync(p.value);
+      var modelFiles = fs.readdirSync(modelPath);
       
       if(utils.count(modelFiles) > 0 ) {
         totalModels += utils.count(modelFiles);
@@ -43,13 +43,14 @@ exports.init = function(bonobo) {
       i++;
       modelFiles.forEach(function (file) {
         
-        require(path.join(p.value, file)).init(function(err, msg) { 
+        require(path.join(modelPath, file)).init(function(err, msg) { //this actually loads and inits the models
                    
-          if(err) errs.push(err);
-          if(msg) msgs.push(msg);
+          errs = utils.getErrs(errs,err);
+          msgs = utils.getMsgs(msgs,msg);
           
+          
+            
           j++;
-          
           
           if(i >= utils.count(modelPaths) && j >= totalModels ) {
             

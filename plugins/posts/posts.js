@@ -9,7 +9,6 @@ var express = require('express')
 var posts = module.exports = {
     routes:   {}
   , rootDir:  __dirname
-  , modelPaths: []
   , reqs: {
         gets:  []
       , posts: []
@@ -17,8 +16,6 @@ var posts = module.exports = {
 };
  
 posts.init = function(bonobo, cb) {
-  
-  posts.modelPaths.push(path.join(posts.rootDir, 'models'));
   
   posts.admin = {};
   

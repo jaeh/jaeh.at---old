@@ -20,7 +20,7 @@
 
   <select name="<%= id %>" id="<%= id %>" class="<%= type %>">
   
-    <% utils.each(val.options, function (v) { %>
+    <% ut.deprecated_each(val.options, function (v) { %>
       <option value="<%= v.value %>"><%= v.value %></option>
     <% }); %>
   </select>
@@ -30,7 +30,7 @@
 <% if ( type === "version" ) { %>
   <% var v = val.split("."); %>
   
-  <% utils.each(v, function (vi) { %>
+  <% ut.deprecated_each(v, function (vi) { %>
     <input class="compact <%= type %>" type="number" maxlength="1" min="0" max="99" value="<%= vi.value %>" name="<%= id %>-<%= vi.key %>" id="<%= id %>-<%= vi.key %>" />
   <% }); %>
 <% } %>

@@ -60,9 +60,11 @@ exports.init = function(bonobo) {
               for(var idx in reqs) {
                 
                 var verbs = reqs[idx];
+                
                 //~ console.log('verbs = ');
                 //~ console.log(verbs);
                 for(var verb in verbs) {
+                  
                   var fE = verbs[verb];
                   //~ console.log('fE =');
                   //~ console.log(fE);

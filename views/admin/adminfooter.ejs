@@ -24,11 +24,13 @@
         <%= pD.footer %>
       <% } %>
       
-      <% if ( mIs != false ) { %>
+      <% if ( typeof menuItems !== 'undefined' && ut.count(menuItems) > 0 ) { %>
         <nav>
-          <ul>            
-            <% ut.each(mIs, function (mI) { %>
-              <li><a href="<%= mI.value.url %>"><%= mI.value.text %></a></li>
+          <ul>
+            <% ut.deprecated_each(menuItems.adminfooter, function (menuItem) { %>
+              <li>
+                <a href="<%= menuItem.value.url %>"><%= menuItem.value.text %></a>
+              </li>
             <% }) %>
           </ul>
         </nav>
@@ -40,5 +42,4 @@
       <% } %>
     </div>
   </body>
-
 </html>

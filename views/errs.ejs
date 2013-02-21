@@ -1,0 +1,12 @@
+<% var errs = locals.errs || false ; %>
+
+<% if ( errs !== false  ) {
+  utils.each(errs, function (k, err) {
+    if ( typeof err !== 'undefined' ) { %>
+      <% ut.each(err, function (kk, er) {%>
+        <% if ( er.message) { %>
+          <div class="<%= er.css %>"><%= er.message %></div>
+        <% } %>
+    <% });}
+  })
+} %>
