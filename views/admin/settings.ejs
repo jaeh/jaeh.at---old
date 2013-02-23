@@ -4,8 +4,8 @@
 
 <% include adminheader.ejs %>
 
-<% ut.deprecated_each(locals.messages, function(msg) { %>
-  <div class="<%= msg.value.css %>"><%= msg.value.text %></div>
+<% ut.each(locals.messages, function(key, msg) { %>
+  <div class="<%= msg.css %>"><%= msg.text %></div>
 <% }); %>
 
 <div class="info">
@@ -13,9 +13,12 @@
   
   <h2>Plugins:</h2>
   <ul class="plugins">
-    <% ut.deprecated_each(locals.settings, function(set) { %>
+    <% ut.each(locals.plugins, function(k,s){ %>
+      <%= k %>:<%=s%>
+    <% }) %>
+    <% ut.each(locals.settings, function(key, set) { %>
       <li>
-        <a href="/admin/plugins/<%= ut.slugify(set.value.name.value) %>"><%= set.value.name.value %></a>
+        <a href="/admin/plugins/<%= ut.slugify(set.name.value) %>"><%= set.name.value %></a>
       </li>
     <% }); %>
   </ul>

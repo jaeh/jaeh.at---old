@@ -4,7 +4,8 @@ var mongoose = require('mongoose')
   , ObjectId = mongoose.Schema.Types.ObjectId
   , Schema = mongoose.Schema
   , path = require('path')
-  , utils = require(path.join(__dirname, '..', '..', '..', 'base', 'utils'));
+  , utils = require(path.join(__dirname, '..', '..', '..', 'base', 'utils'))
+  , modelName = 'Post';
 
 exports.init = function(cb) {
   
@@ -31,8 +32,8 @@ exports.init = function(cb) {
     return title.length > 0
   }, 'page title cannot be blank');
 
-  mongoose.model('Post', schema);
   
-  
-  cb(null, {message: "Post model setup success", css: "win"});
+  mongoose.model(modelName, schema);
+
+  cb(null,null, modelName);
 }

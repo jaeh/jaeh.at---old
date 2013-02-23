@@ -3,6 +3,7 @@
 var mongoose = require('mongoose')
   , ObjectId = mongoose.Schema.Types.ObjectId
   , Schema = mongoose.Schema
+  , modelName = 'OpenGraphData';
 
 
 exports.init = function(cb) {
@@ -27,9 +28,8 @@ exports.init = function(cb) {
     next();
   });
 
-  mongoose.model('OpenGraphData', schema);
+  mongoose.model(modelName, schema);
 
-  
-  cb(null, {message: "OpenGraphData model setup success", css: "win"});
+  cb(null,null, modelName);
 
 }

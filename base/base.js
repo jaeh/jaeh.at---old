@@ -23,7 +23,10 @@ base.config = function (server, cb) {
     
     base.set('view engine','ejs');  // use the EJS node module
       
+    base.use(express.logger('dev'));  
+    
     base.use(express.favicon(path.join(server.rootDir, '/public/images/favicon.ico')));
+    
     
     base.use(stylus.middleware({
         src: server.rootDir + '/public/'
@@ -37,7 +40,6 @@ base.config = function (server, cb) {
     
     base.use(express.static(path.join(server.rootDir, 'public')));
     
-    base.use(express.logger('dev'));
     
     base.use(express.compress());
     base.use(express.cookieParser('etgvwezgwegwgwgw'));

@@ -3,37 +3,34 @@
 
 var mongoose = require('mongoose')
   , path = require('path')
+  , server = require(path.join(__dirname, '..','..','..', 'server'))
+  , bonobo = require(path.join(__dirname, '..','..','..', 'bonobo','bonobo'))
   , utils = require(path.join(__dirname, '..', '..', '..', 'base', 'utils'));
   
   
 var routes = module.exports = {
 
   pluginSettings: function(req, res, next) {
-      
-    var reqBody = utils.requestBodyToJSON(req.body);
-
-    var Setting = mongoose.model('Setting');
+    //var settings = require(path.join());
+    console.log('req.params.pluginSlug ='+req.params.pluginSlug);
     
-    Setting.findOne({'slug': req.params.pluginSlug}, function(err, setting) {
-      var opts = {value: {}}
-        , i = 0
-        , errs = []
-        , msgs = [];
-      
-      setting = setting || new Setting();
-      
-      setting.values = reqBody;
+    var settings = require(path.join(server.rootDir, 'plugins', req.params.pluginSlug, 'settings')) || false;
     
-      opts.key = req.params.pluginSlug;
-      opts.value.value = reqBody;
+    if(!settings) next();
+    
+    bonobo.getPluginSettings(settings, function(err, msg, setting) {
+      if(setting && setting.values) {
+        settings = utils.MongoToJSON(settings, setting.values);
+      }
       
+      var set = {
+          key: settings.name.value
+        , value: {
+            value: settings
+        }
+      }
       
-      setting.save(function(err) {
-        if(err) errs.push({message: err, css: 'fail'});
-        else msgs.push({message: 'Settings saved successfully', css: 'win'});
-        
-        res.render('admin/pluginSettings', {setting: opts, messages: msgs, errors: errs});
-      });
+      res.render('admin/pluginSettings', {setting: set});
     });
   }
   ,

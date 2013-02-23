@@ -3,7 +3,8 @@
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
   , path = require('path')
-  , utils = require(path.join(__dirname, '../../../base/utils'));
+  , utils = require(path.join(__dirname, '../../../base/utils'))
+  , modelName = 'Category';
 
 exports.init = function(cb) {
 
@@ -27,8 +28,7 @@ exports.init = function(cb) {
     return title.length > 0
   }, 'category title cannot be blank');
 
-  mongoose.model('Category', schema);
+  mongoose.model(modelName, schema);
 
-  cb(null, {message: "Category model setup success", css: "win"});
+  cb(null,null, modelName);
 }
-  

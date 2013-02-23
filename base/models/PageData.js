@@ -3,7 +3,8 @@
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
   , path = require('path')
-  , utils = require(path.join(__dirname, '../utils'));
+  , utils = require(path.join(__dirname, '../utils'))
+  , modelName = 'PageData';
 
 
 exports.init = function(cb){
@@ -21,11 +22,6 @@ exports.init = function(cb){
     }
   });
 
-  //~ 
-  //~ schema.methods.getMenu = function() {
-    //~ 
-  //~ }
-
   schema.path('values.title').validate(function (title) {
     return title.length > 0
   }, 'page title cannot be blank');
@@ -36,7 +32,7 @@ exports.init = function(cb){
     next();
   });
 
-  mongoose.model('PageData', schema);
+  mongoose.model(modelName, schema);
 
-  cb(null, {message: "PageData model setup success", css: "win"});
+  cb(null,null, modelName);
 }

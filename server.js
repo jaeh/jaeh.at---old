@@ -22,7 +22,7 @@ server.settings = {
   mongodb: {
     url: '127.0.0.1',
     port: '27017',
-    db: 'goofy332'
+    db: 'goofy33222222'
   }
 };
 

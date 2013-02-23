@@ -4,7 +4,8 @@ var mongoose = require('mongoose')
   , ObjectId = mongoose.Schema.Types.ObjectId
   , Schema = mongoose.Schema
   , path = require('path')
-  , utils = require(path.join(__dirname, "../../../base/utils"));
+  , utils = require(path.join(__dirname, "../../../base/utils"))
+  , modelName = 'UserRegistration';
 
 
 exports.init = function(cb) {
@@ -41,8 +42,8 @@ exports.init = function(cb) {
     return email.length > 0
   }, 'user password cannot be blank');
 
-  mongoose.model('UserRegistration', schema);
+  
+  mongoose.model(modelName, schema);
 
-
-  cb(null, {message: "UserRegistration model setup success", css: "win"});
+  cb(null,null, modelName);
 }

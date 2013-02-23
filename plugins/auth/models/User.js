@@ -3,6 +3,7 @@
 var mongoose = require('mongoose')
   , ObjectId = mongoose.Schema.Types.ObjectId
   , Schema = mongoose.Schema
+  , modelName = 'User';
 
 
 exports.init = function(cb) {
@@ -50,8 +51,8 @@ exports.init = function(cb) {
     return email.length > 0
   }, 'user password cannot be blank');
 
-  mongoose.model('User', schema);
+  
+  mongoose.model(modelName, schema);
 
-
-  cb(null, {message: "User model setup success", css: "win"});
+  cb(null,null, modelName);
 }

@@ -1,31 +1,53 @@
 <% 
-  var ut = locals.utils;
+  var ut = locals.utils
+    , settings = locals.settings || false
+    , msgs = locals.msgs || false
+    , errs = locals.errs || false;
+    
+    
 %>
 
 <% include adminheader.ejs %>
 
-<% ut.deprecated_each(locals.messages, function(msg) { %>
-  <div class="<%= msg.value.css %>"><%= msg.value.text %></div>
-<% }); %>
+<% include ../errs.ejs %>
+<% include ../msgs.ejs %>
 
 <div class="info">
-  This page will hold overviews over various possible options,
-  
+  This page will hold overviews over various plugin options.
+
   <h2>Plugins:</h2>
-  <ul class="plugins">
-    <% ut.deprecated_each(locals.settings, function(set) { %>
-      <% if(typeof set.value.name === "string") { %>
-        <li>
-          <a href="/admin/plugins/<%= ut.slugify(set.value.name) %>"><%= set.value.name %></a>
-        </li>
-      <% } else { %>
-        <% ut.deprecated_each(set.value.name, function(s) { %>
-          <%= s.key %>:<%= s.value %>
-        <% }); %>
-      <% } %>
-    <% }); %>
-  </ul>
-  
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Options</th>
+      </tr>
+    </thead>
+    <tbody>      
+      <% ut.each(locals.settings, function(k,s){ %>
+        <%= k %>:<%=s%>
+      <%})%>
+      
+      <% ut.each(locals.plugins, function(pluginName, plugin) { %>
+      
+        <% var setting = locals.settings[pluginName]; %>
+        <tr>
+          <td><a href="/admin/plugins/<%= ut.slugify(pluginName) %>"><%= pluginName %></a></td>
+          <td><%= setting.description.value %></td>
+          <td>
+              
+              <% var hamletsQuestion = "turn on";
+              if( setting.published.value == true ){
+                hamletsQuestion = "turn off";
+              } %>
+              
+              <button type="submit" value="<%= hamletsQuestion %>"><%= hamletsQuestion %></button>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
 </div>
 
 

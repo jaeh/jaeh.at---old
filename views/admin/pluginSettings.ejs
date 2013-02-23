@@ -2,10 +2,11 @@
 
 <% include adminheader.ejs %>
 
+<%= include ../msgs.ejs %>
+<%= include ../errs.ejs %>
 
 <form method="post">
-  <fieldset>
-    
+  <fieldset>    
     <legend>These are settings for the <%= setting.key %> plugin:</legend>
 
     <div class="form-fields">

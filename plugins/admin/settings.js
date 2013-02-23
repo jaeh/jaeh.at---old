@@ -18,18 +18,29 @@ var settings = module.exports = {
             url: {value: "/admin", type: "text", desc: "the target url"}
           , text: {value: "admin", type: "text", desc: "the link text"}
           , menu: {value: "adminheader", type: "text", desc: "the menu this link should appear in"}
-          , pos: {value: 4, type: "number", desc: "the position priority this link has, 0 = highest, n = lowest"}
+          , pos: {value: 1, type: "number", desc: "the position priority this link has, 0 = highest, n = lowest"}
           , published: {value: true, type: "bool", desc: "will this be shown in menus?"}
         }
       }
-      , settings: {
+      , plugins: {
           type: "list"
         , desc: "the options main menu item"
         , value: { 
             url: {value: "/admin/plugins", type: "text", desc: "the target url"}
           , text: {value: "plugins", type: "text", desc: "the link text"}
           , menu: {value: "adminheader", type: "text", desc: "the menu this link should appear in"}
-          , pos: {value: 5, type: "number", desc: "the position priority this link has, 0 = highest, n = lowest"}
+          , pos: {value: 2, type: "number", desc: "the position priority this link has, 0 = highest, n = lowest"}
+          , published: {value: true, type: "bool", desc: "will this be shown in menus?"}
+        }
+      }
+      , mongodb: {
+          type: "list"
+        , desc: "the mongodb main menu item"
+        , value: { 
+            url: {value: "/admin/mongodb", type: "text", desc: "the target url"}
+          , text: {value: "mongodb", type: "text", desc: "the link text"}
+          , menu: {value: "adminheader", type: "text", desc: "the menu this link should appear in"}
+          , pos: {value: 3, type: "number", desc: "the position priority this link has, 0 = highest, n = lowest"}
           , published: {value: true, type: "bool", desc: "will this be shown in menus?"}
         }
       }

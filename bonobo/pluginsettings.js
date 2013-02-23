@@ -16,19 +16,22 @@ exports.init = function(bonobo, cb) {
       var Setting = mongoose.model("Setting");
       
       Setting.findOne({slug: utils.slugify(pluginSettings.name.value)}, function(err, setting) {
-        
-        if(!setting) {
-          bonobo.updateOrSavePluginSettings(pluginSettings, cb);
-        }else{
+        //~ if(!setting) {
+          //~ bonobo.updateOrSavePluginSettings(pluginSettings, cb);
+        //~ }else{
           cb(err, null, setting);
-        }
+        //~ }
       });
     }
 
-    bonobo.updateOrSavePluginSettings = function(pluginSettings, cb) {
+    bonobo.savePluginSettings = function(pluginSettings, cb) {
       if(!pluginSettings || typeof pluginSettings !== "object") {
-        cb({message: 'invalid settings object passed to bonobo.updateOrSavePluginSettings', css: "fail"});
+        cb({message: 'invalid settings object passed to bonobo.savePluginSettings', css: "fail"});
         return;
+      }
+      
+      if(typeof pluginSettings.name === "object" ){ 
+        pluginSettings = utils.jsonToMongo(pluginSettings) 
       }
       
       var errs = []
@@ -36,7 +39,7 @@ exports.init = function(bonobo, cb) {
         , Setting = mongoose.model("Setting");
       
       
-      Setting.findOne({slug: utils.slugify(pluginSettings.name.value)}, function(err, setting) {
+      Setting.findOne({'values.slug': utils.slugify(pluginSettings.name)}, function(err, setting) {
         
         setting = setting || new Setting();
         
@@ -49,9 +52,9 @@ exports.init = function(bonobo, cb) {
         setting.save(function(err,msg) {
           
           if(errs.length == 0) {
-            msgs.push({message: 'pluginSettings for '+pluginSettings.name.value+' saved successfully', css: 'win'});
+            msgs.push({message: 'pluginSettings for '+pluginSettings.name+' saved successfully', css: 'win'});
           }else{
-            errs.push({message: 'pluginSettings for '+pluginSettings.name.value+' saved with errors', css: 'fail'});
+            errs.push({message: 'pluginSettings for '+pluginSettings.name+' saved with errors', css: 'fail'});
           }
                     
           cb(errs, msgs, setting);

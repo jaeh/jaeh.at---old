@@ -3,7 +3,7 @@
 var mongoose          = require('mongoose')
   , path              = require('path')
   , SHA512            = new(require('jshashes').SHA512)()
-  , auth              = require(path.join(__dirname, '..', 'auth'));
+  , auth              = require(path.join(__dirname, '..'));
 
 
 var routes = module.exports = {

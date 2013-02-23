@@ -3,8 +3,8 @@
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
   , path = require('path')
-  , utils = require(path.join(__dirname, '../utils'));
-
+  , utils = require(path.join(__dirname, '../utils'))
+  , modelName = 'MenuItem';
 
 exports.init = function(cb) {
   
@@ -38,12 +38,11 @@ exports.init = function(cb) {
       this.values.published = false;
     }
     
-    
 
     next();
   });
 
-  mongoose.model('MenuItem', schema);
+  mongoose.model(modelName, schema);
 
-  cb(null,null);
+  cb(null,null, modelName);
 }

@@ -3,7 +3,8 @@
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
   , path = require('path')
-  , utils = require(path.join(__dirname, '../utils'));
+  , utils = require(path.join(__dirname, '../utils'))
+  , modelName = 'Page';
 
 exports.init = function(cb) {
 
@@ -45,8 +46,7 @@ exports.init = function(cb) {
     next();
   });
 
-  mongoose.model('Page', schema);
+  mongoose.model(modelName, schema);
 
-
-  cb(null, {message: "Page model setup success", css: "win"});
+  cb(null,null, modelName);
 }

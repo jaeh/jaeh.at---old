@@ -3,7 +3,8 @@
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
   , path = require('path')
-  , utils = require(path.join(__dirname, '../utils'));
+  , utils = require(path.join(__dirname, '../utils'))
+  , modelName = 'Setting';
 
 
 exports.init = function(cb) {
@@ -15,19 +16,13 @@ exports.init = function(cb) {
   });
 
 
-  schema.pre('save', function(next) {    
-
-
-    if(typeof this.values.name === "object"){ 
-      this.slug = utils.slugify(this.values.name.value);
-    }else if( typeof this.values.name === "string") {
-      this.slug = utils.slugify(this.values.name);
-    }
+  schema.pre('save', function(next) {
+    this.slug = utils.slugify(this.values.name);
     
     next();
   });
 
-  mongoose.model('Setting', schema);
+  mongoose.model(modelName, schema);
 
-  cb(null, {message: "Setting model setup success", css: "win"});
+  cb(null,null, modelName);
 }

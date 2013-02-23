@@ -22,7 +22,7 @@ var bonobo = module.exports = {
   
   , plugins : {}    //plugin object that holds the plugins
   
-  , modelPaths : [] //DEPRECATED
+  , modelPaths : [] //
   
   , middleWare: []  //these will be used in base.config to setup middleware for the various plugins
   
@@ -50,7 +50,7 @@ bonobo.init = function(rootDir, cb) {
     
     var pluginName = readDirs[i];
     
-    var filename = path.join(rootDir, pluginName, pluginName);
+    var filename = path.join(rootDir, pluginName);
     
     require(filename).init(bonobo, function(err, plugin) {
       if(err) errs.push({message: err, css: 'fail'});

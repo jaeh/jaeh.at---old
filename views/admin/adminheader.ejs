@@ -12,12 +12,16 @@
 <html>
   <head>
     <title><%= pD.title %></title>
+    <link rel="shortcut icon" href="/favicon.ico">
   
     <link rel='stylesheet' href='/css/style.css'>
     <link rel='stylesheet' href='/css/adminstyle.css'>
   </head>
 
   <body>
+    <% ut.each(menuItems, function(k, mI){ %>
+      <%= mI %>
+    <% }) %>
     <header>
       <div id="logo">
         <% if (pD.logo && pD.logo.src) { %>

@@ -149,7 +149,7 @@ var utils = module.exports = {
     console.log(text);
   }
   ,
-  settingsToMongo: function(setting) {              //this function maps settings.js files to mongodb setting objects.
+  jsonToMongo: function(setting) {              //this function maps settings.js files to mongodb setting objects.
     var mongoObject = {};             
     
     for(var key in setting) {
@@ -159,6 +159,17 @@ var utils = module.exports = {
     }
     
     return mongoObject;
+  }
+  ,
+  MongoToJSON: function(settings, setting) {
+    for(var key in setting) {
+      if(!settings.value[key]) settings.value[key] = {};
+      
+      settings.value[key].value = setting[key];
+      
+    }
+    
+    return settings;
   }
   ,
   getErrs: function(errs,err) {                     //get the new error array and return it
@@ -182,4 +193,11 @@ var utils = module.exports = {
     }
     return msgs;
   }  
+  ,
+  matchInArray: function(needle, heystack) {
+    for (var j=0; j < heystack.length; j++) {
+        if (heystack[j].match (needle)) return j;
+    }
+    return -1;
+  }
 }

@@ -8,7 +8,12 @@ var path      = require('path')
   , server = require(path.join(__dirname, '..', 'server'))
   , modelPaths = [];
   
+  
 exports.init = function(bonobo) { 
+  
+  
+  bonobo.models = {};
+  
   
   bonobo.DoThemModels = function(cb) {
     
@@ -43,12 +48,12 @@ exports.init = function(bonobo) {
       i++;
       modelFiles.forEach(function (file) {
         
-        require(path.join(modelPath, file)).init(function(err, msg) { //this actually loads and inits the models
+        require(path.join(modelPath, file)).init(function(err, msg, modelName, model) { //this actually loads and inits the models
                    
           errs = utils.getErrs(errs,err);
           msgs = utils.getMsgs(msgs,msg);
           
-          
+          bonobo.models[modelName] = model;
             
           j++;
           
