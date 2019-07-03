@@ -3,19 +3,23 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node server"
+    "start": "node server",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "dependencies": {
-    "express"       : ">=3.0.6",
-    "ejs"           : "latest",
-    "stylus"        : "latest",
-    "mongoose"      : "latest",
+    "express": ">=3.0.6",
+    "ejs": "latest",
+    "stylus": "latest",
+    "mongoose": "latest",
     "mongoose-types": "latest",
-    "passport"      : "latest",
+    "passport": "latest",
     "passport-local": "latest",
-    "underscore"    : "latest",
-    "jshashes"      : "latest",
-    "moment"        : "latest",
-    "async"         : "latest"
-  }
+    "underscore": "latest",
+    "jshashes": "latest",
+    "moment": "latest",
+    "async": "latest",
+    "snyk": "^1.189.0"
+  },
+  "snyk": true
 }
